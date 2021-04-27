@@ -31,9 +31,11 @@ public class Diary extends Fragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState)
+    public void onStart()
     {
-        super.onCreate(savedInstanceState);
+        super.onStart();
+        //setContentView(R.layout.fragment_diary);
+
         CalendarView cal = (CalendarView)v.findViewById(R.id.calendarView);
         cal.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
@@ -43,6 +45,7 @@ public class Diary extends Fragment {
                 mday = dayOfMonth;
             }
         });
+
     }
 
 }
