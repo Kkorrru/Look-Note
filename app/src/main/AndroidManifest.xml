@@ -9,6 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+        <activity android:name=".SearchWindow"></activity>
         <activity android:name=".InputWindow"></activity>
         <activity android:name=".MainActivity"></activity>
         <activity android:name=".SplashActivity">
