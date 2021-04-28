@@ -23,6 +23,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
+        <Button
+            android:id="@+id/his_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="기록조회" />
+
     </LinearLayout>
 
 </FrameLayout>
