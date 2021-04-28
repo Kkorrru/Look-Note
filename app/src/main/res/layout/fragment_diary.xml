@@ -13,10 +13,9 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/testdiary"
+            android:id="@+id/textView"
             android:layout_width="match_parent"
-            android:layout_height="199dp"
-            android:text="diary" />
+            android:layout_height="166dp" />
 
         <CalendarView
             android:id="@+id/calendarView"
@@ -25,10 +24,12 @@
 
         <Button
             android:id="@+id/his_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="기록조회" />
-
+            android:layout_width="118dp"
+            android:layout_height="58dp"
+            android:layout_gravity="center"
+            android:backgroundTint="#8CA1B7"
+            android:text="기록조회"
+            android:textColor="@color/white" />
     </LinearLayout>
 
 </FrameLayout>

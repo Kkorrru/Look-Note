@@ -12,37 +12,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CalendarView;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import java.util.Calendar;
 
 
 public class Diary extends Fragment {
 
+
     View v;
 
-    public interface OnDateListener{
-        void onDateset(int myear, int mmonth, int mday);
-    }
-    @Override
-    public void onAttach(Context context)
-    {
-        super.onAttach(context);
-        if(context instanceof OnDateListener)
-        {
-            onDateListener = (OnDateListener)context;
-        }
-//        else
-//        {
-//            throw new RuntimeException(context.toString()+" must implement");
-//        }
-    }
-    @Override
-    public void onDetach()
-    {
-        super.onDetach();
-        onDateListener = null;
-    }
-    private OnDateListener onDateListener;
+    int y;
+    int m;
+    int d;
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -57,23 +43,39 @@ public class Diary extends Fragment {
     {
         super.onStart();
         //setContentView(R.layout.fragment_diary);
-
+        //TextView textView = v.findViewById(R.id.testdiary);
         CalendarView cal = (CalendarView)v.findViewById(R.id.calendarView);
+        Calendar getcal = Calendar.getInstance();
+        y = getcal.get(Calendar.YEAR);
+        m = getcal.get(Calendar.MONTH)+1;
+        d = getcal.get(Calendar.DATE);
+
         cal.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+
             @Override
             public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
+                month +=1;
+                y = year;
+                m = month;
+                d = dayOfMonth;
 
-                onDateListener.onDateset(year,month,dayOfMonth);
+                //textView.setText(String.format("%d/%d/%d", year, month, dayOfMonth));
+
             }
+
         });
 
-        Button historybutton = (Button) v.findViewById(R.id.his_button);
+    Button historybutton = (Button) v.findViewById(R.id.his_button);
         historybutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity().getApplicationContext(), SearchWindow.class);
+                intent.putExtra("year", y);
+                intent.putExtra("month", m);
+                intent.putExtra("day", d);
                 startActivity(intent);
             }
+
         });
     }
 

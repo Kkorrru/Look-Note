@@ -10,68 +10,50 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="APRIL 10"
+        android:textColor="#636363"
+        android:textSize="26sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.047"
+        app:layout_constraintHorizontal_bias="0.093"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.021" />
+        app:layout_constraintVertical_bias="0.06" />
 
     <ImageView
-        android:id="@+id/sat_select"
-        android:layout_width="154dp"
-        android:layout_height="163dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:id="@+id/face"
+        android:layout_width="162dp"
+        android:layout_height="153dp"
+        app:layout_constraintBottom_toTopOf="@+id/textView3"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.1"
-        tools:srcCompat="@drawable/nice_big" />
-
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="입은 옷"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.045"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/date"
-        app:layout_constraintVertical_bias="0.392" />
+        app:layout_constraintVertical_bias="0.363"
+        app:srcCompat="@drawable/nice_big" />
 
     <TextView
         android:id="@+id/textView4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="기록"
+        android:textSize="18sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.043"
+        app:layout_constraintHorizontal_bias="0.074"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView3"
-        app:layout_constraintVertical_bias="0.442" />
-
-    <TextView
-        android:id="@+id/textView11"
-        android:layout_width="360dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="9dp"
-        android:text="햇빛이 선명하게 나뭇잎을 핥고 있었다."
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.589"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView4"
-        app:layout_constraintVertical_bias="0.061" />
+        app:layout_constraintVertical_bias="0.424" />
 
     <Button
         android:id="@+id/button_edit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="56dp"
-        android:text="편집"
+        android:backgroundTint="#8CA1B7"
+        android:text="EDIT"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
@@ -81,41 +63,42 @@
 
     <LinearLayout
         android:id="@+id/linearLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="129dp"
+        android:layout_height="33dp"
         android:orientation="horizontal"
         app:layout_constraintBottom_toTopOf="@+id/textView3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sat_select">
+        app:layout_constraintTop_toBottomOf="@+id/face">
 
         <ImageView
             android:id="@+id/weather"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_width="39dp"
+            android:layout_height="28dp"
             android:layout_weight="1"
-            android:background="#00BCD4"
-            app:srcCompat="@android:drawable/ic_lock_idle_low_battery" />
+            app:srcCompat="@drawable/rain" />
 
         <TextView
             android:id="@+id/temperature"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="16˚C / 6˚C" />
+            android:text="16˚C / 6˚C"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
     </LinearLayout>
 
     <TableLayout
         android:id="@+id/tableLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="343dp"
+        android:layout_height="97dp"
         app:layout_constraintBottom_toTopOf="@+id/textView4"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.333"
+        app:layout_constraintHorizontal_bias="0.54"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-        app:layout_constraintVertical_bias="0.878">
+        app:layout_constraintTop_toBottomOf="@+id/textView3"
+        app:layout_constraintVertical_bias="0.245">
 
         <TableRow
             android:layout_width="match_parent"
@@ -124,14 +107,14 @@
             <TextView
                 android:id="@+id/textView8"
                 android:layout_width="80dp"
-                android:layout_height="50dp"
-                android:text="상의" />
+                android:layout_height="30dp"
+                android:text="⦁ 상의" />
 
             <TextView
                 android:id="@+id/textView12"
-                android:layout_width="280dp"
-                android:layout_height="match_parent"
-                android:text="상" />
+                android:layout_width="287dp"
+                android:layout_height="30dp"
+                android:text="빨간 스웨터" />
 
         </TableRow>
 
@@ -142,14 +125,14 @@
             <TextView
                 android:id="@+id/textView9"
                 android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:text="하의" />
+                android:layout_height="30dp"
+                android:text="⦁ 하의" />
 
             <TextView
                 android:id="@+id/textView13"
                 android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:text="하" />
+                android:layout_height="30dp"
+                android:text="슬랙스" />
 
         </TableRow>
 
@@ -159,17 +142,44 @@
 
             <TextView
                 android:id="@+id/textView10"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:text="악세서리" />
+                android:layout_width="75dp"
+                android:layout_height="match_parent"
+                android:text="⦁ 악세서리" />
 
             <TextView
                 android:id="@+id/textView14"
                 android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:text="트위스트" />
+                android:layout_height="30dp"
+                android:text="노랑 목도리" />
         </TableRow>
 
     </TableLayout>
+
+    <TextView
+        android:id="@+id/textView11"
+        android:layout_width="338dp"
+        android:layout_height="52dp"
+        android:layout_marginTop="9dp"
+        android:text="햇빛이 선명하게 나뭇잎을 핥고 있었다."
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.472"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView4"
+        app:layout_constraintVertical_bias="0.035" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="그날의 옷차림"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.09"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/date"
+        app:layout_constraintVertical_bias="0.446" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
