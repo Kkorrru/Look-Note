@@ -6,9 +6,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
-public class SearchWindow extends AppCompatActivity {
+public class SearchWindow extends AppCompatActivity implements Diary.OnDateListener{
 
+    int mmyear;
+    int mmmonth;
+    int mmdate;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -22,5 +26,21 @@ public class SearchWindow extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    @Override
+    public void onDateset(int myear, int mmonth, int mdate)
+    {
+        mmyear = myear;
+        mmmonth = mmonth;
+        mmdate = mdate;
+    }
+    @Override
+    public void onStart()
+    {
+        super.onStart();
+        TextView dateText = (TextView)findViewById(R.id.date);
+
+        dateText.setText(mmyear+"/"+mmdate);
     }
 }
