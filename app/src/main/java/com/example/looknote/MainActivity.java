@@ -42,11 +42,21 @@ class dbHelper extends SQLiteOpenHelper
 public class MainActivity extends AppCompatActivity {
 //
     BottomNavigationView bottomNavigationView;
+    private SQLiteDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        dbHelper helper = new dbHelper(this);
+        try {
+            db = helper.getWritableDatabase();
+        }
+        catch (SQLiteException ex)
+        {
+            db = helper.getReadableDatabase();
+        }
 
         bottomNavigationView = findViewById(R.id.bottomNavi);
         //bottomNavigationView.setItemIconTintList(null);
