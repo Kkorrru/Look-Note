@@ -69,7 +69,7 @@ public class Weather extends Fragment {
     // =====날씨=====
     //참고: https://m.blog.naver.com/PostView.nhn?blogId=ksseo63&logNo=221035949094&proxyReferer=https:%2F%2Fwww.google.com%2F
     private static final String WEATHER_URL = "http://apis.data.go.kr/1360000/VilageFcstInfoService/getVilageFcst";
-    private static final String SERVICE_KEY = "";
+    private static final String SERVICE_KEY = "6S0lcBiMRAFjVAw8ZZ6rbYFUawGLYfg4uF1LkmW05eidtnQrrANwIP70KKEHRoWyO2IW3gJtsBBGKJEi4%2B8gPw%3D%3D";
     WeatherInfoTask weatherTask;
 
     View v;
