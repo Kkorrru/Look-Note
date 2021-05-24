@@ -26,8 +26,7 @@ class dbHelper extends SQLiteOpenHelper
     @Override
     public void onCreate(SQLiteDatabase db)
     {
-        db.execSQL("CREATE TABLE record(_id INTEGER PRIMARY KEY AUTOINCREMENT, satisf TEXT, top_c TEXT, bottom_c TEXT, acc TEXT, diary TEXT)");
-        db.execSQL("CREATE TABLE weather(_id INTEGER PRIMARY KEY AUTOINCREMENT, max_tem TEXT, min_tem TEXT, sky TEXT)");
+        db.execSQL("CREATE TABLE record(_id INTEGER PRIMARY KEY AUTOINCREMENT, date_num INTEGER, satisf INTEGER, top_c TEXT, bottom_c TEXT, acc TEXT, diary TEXT, max_tem REAL, min_tem REAL, sky INTEGER)");
     }
 
     @Override
