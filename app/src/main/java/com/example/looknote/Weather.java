@@ -1,8 +1,13 @@
 package com.example.looknote;
 
 import android.Manifest;
+import android.accessibilityservice.AccessibilityService;
 import android.annotation.SuppressLint;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -10,10 +15,19 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.Operation;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
+import androidx.work.WorkRequest;
+import androidx.work.Worker;
+import androidx.work.WorkerParameters;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -30,11 +44,19 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
+
+import androidx.work.WorkManager;
+import androidx.work.impl.utils.taskexecutor.WorkManagerTaskExecutor;
+
 
 public class Weather extends Fragment {
+
+    boolean isBackGround = false;
 
     // =====위치=====
     private int MY_PERMISSIONS_REQUEST_LOCATION = 10;
@@ -192,13 +214,18 @@ public class Weather extends Fragment {
         todayDate = sdf.format(mDate).substring(0, 8);
         todayHour = sdf.format(mDate).substring(8, 10);
 
-        Log.d("Debug", todayHour);
+        Log.d("Debug", "todayHour: " + todayHour);
 
         if (Integer.parseInt(todayHour) >= 0 && Integer.parseInt(todayHour) < 6)
             todayDate = Integer.toString(Integer.parseInt(todayDate) - 1);
 
         mpageNo = "8";
         getWeatherInfo();
+
+        // =================알람===================
+//        WorkRequest periodicWorkRequest = new PeriodicWorkRequest.Builder(UploadWorker.class, 1, TimeUnit.MINUTES)
+//                .build();
+//        Operation mWorkManager = WorkManager.getInstance().enqueue(periodicWorkRequest);
 
         return v;
     }
@@ -210,7 +237,7 @@ public class Weather extends Fragment {
 //        super.onSaveInstanceState(outState);
 //    }
 
-    private void getWeatherInfo() {
+    void getWeatherInfo() {
         if(weatherTask != null) {
             weatherTask.cancel(true);
         }
@@ -350,8 +377,35 @@ public class Weather extends Fragment {
                 textview = v.findViewById(R.id.todayT3H);
                 textview.setText(s.substring(beginIndex, endIndex) + " ºC");
 
-                mpageNo = "6";
+                mpageNo = "2";
                 getWeatherInfo();
+                return;
+            }
+            if(mpageNo == "2")
+            {
+                int beginIndex = s.indexOf("<fcstValue>") + "<fcstValue>".length();
+                int endIndex = s.indexOf("</fcstValue>");
+
+                imageView = (ImageView) v.findViewById(R.id.todaySKY);
+                switch (s.substring(beginIndex, endIndex))
+                {
+                    case "1": // 비
+                        imageView.setImageResource(R.drawable.rain);
+                        break;
+                    case "2": // 비/눈
+                        imageView.setImageResource(R.drawable.rainNsnow);
+                        break;
+                    case "3": // 눈
+                        imageView.setImageResource(R.drawable.snow);
+                        break;
+                    case "4": // 소나기
+                        imageView.setImageResource(R.drawable.shower);
+                        break;
+                    default: // 없음
+                        mpageNo = "6";
+                        getWeatherInfo();
+                        break;
+                }
                 return;
             }
             if(mpageNo == "6")
@@ -366,17 +420,15 @@ public class Weather extends Fragment {
                 switch (s.substring(beginIndex, endIndex))
                 {
                     case "1": // 맑음
-                        imageView.setImageResource(R.drawable.nb01);
+                        imageView.setImageResource(R.drawable.sunny);
                         break;
                     case "3": // 구름 많음
-                        imageView.setImageResource(R.drawable.nb03);
+                        imageView.setImageResource(R.drawable.cloudy);
                         break;
                     case "4": // 흐림
-                        imageView.setImageResource(R.drawable.nb04);
+                        imageView.setImageResource(R.drawable.blur);
                         break;
                 }
-
-                //todayWeathers[3] = (String) textview.getText();
 
                 return;
             }
