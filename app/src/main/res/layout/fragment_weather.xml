@@ -64,7 +64,7 @@
         app:layout_constraintStart_toEndOf="@+id/todayT3H"
         app:layout_constraintTop_toBottomOf="@+id/weather_title"
         app:layout_constraintVertical_bias="0.102"
-        app:srcCompat="@drawable/nb01" />
+        app:srcCompat="@drawable/sunny" />
 
     <TextView
         android:id="@+id/todayTMX"
@@ -125,8 +125,8 @@
         app:layout_constraintVertical_bias="0.061" />
 
     <ListView
-        android:layout_width="358dp"
-        android:layout_height="318dp"
+        android:layout_width="357dp"
+        android:layout_height="327dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.49"

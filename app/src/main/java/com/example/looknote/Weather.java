@@ -393,7 +393,7 @@ public class Weather extends Fragment {
                         imageView.setImageResource(R.drawable.rain);
                         break;
                     case "2": // 비/눈
-                        imageView.setImageResource(R.drawable.rainNsnow);
+                        imageView.setImageResource(R.drawable.rainnsnow);
                         break;
                     case "3": // 눈
                         imageView.setImageResource(R.drawable.snow);
