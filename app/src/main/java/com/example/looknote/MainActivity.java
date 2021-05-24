@@ -3,10 +3,41 @@ package com.example.looknote;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.MenuItem;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
+import android.database.sqlite.SQLiteOpenHelper;
+
+class dbHelper extends SQLiteOpenHelper
+{
+    private static final String DATABASE_NAME = "looknote.db";
+    private static final int DATABASE_VERSION = 1;
+
+    public dbHelper(Context context)
+    {
+        super(context, DATABASE_NAME ,null, DATABASE_VERSION);
+    }
+
+    @Override
+    public void onCreate(SQLiteDatabase db)
+    {
+        db.execSQL("CREATE TABLE record(_id INTEGER PRIMARY KEY AUTOINCREMENT, satisf TEXT, top_c TEXT, bottom_c TEXT, acc TEXT, diary TEXT)");
+        db.execSQL("CREATE TABLE weather(_id INTEGER PRIMARY KEY AUTOINCREMENT, max_tem TEXT, min_tem TEXT, sky TEXT)");
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
+    {
+        db.execSQL("DROP TABLE IF EXISTS contact");
+        onCreate(db);
+    }
+
+}
 
 public class MainActivity extends AppCompatActivity {
 //
