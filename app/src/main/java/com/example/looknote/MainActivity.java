@@ -57,6 +57,10 @@ public class MainActivity extends AppCompatActivity {
             db = helper.getReadableDatabase();
         }
 
+        GetWeather gw = new GetWeather();
+        gw.hasLocation = false;
+        gw.setWorkManger();
+
         bottomNavigationView = findViewById(R.id.bottomNavi);
         //bottomNavigationView.setItemIconTintList(null);
 

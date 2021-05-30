@@ -125,6 +125,7 @@
         app:layout_constraintVertical_bias="0.061" />
 
     <ListView
+        android:id="@+id/recommand_listvew"
         android:layout_width="357dp"
         android:layout_height="327dp"
         app:layout_constraintBottom_toBottomOf="parent"
