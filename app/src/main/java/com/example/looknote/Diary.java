@@ -1,9 +1,12 @@
 package com.example.looknote;
 
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +24,6 @@ import java.util.Random;
 
 public class Diary extends Fragment {
 
-
     View v;
     Button next;
     Button prev;
@@ -34,6 +36,9 @@ public class Diary extends Fragment {
     int calLastDay;
     Calendar today = Calendar.getInstance();
     Calendar cal;
+
+    int dateStart;
+    int dateEnd;
 
     GridListAdapter adapter;
     int imgList[] = {R.drawable.none_icon, R.drawable.cold_icon, R.drawable.cool_icon, R.drawable.nice_icon, R.drawable.warm_icon, R.drawable.hot_icon};
@@ -126,21 +131,59 @@ public class Diary extends Fragment {
     public void onStart() {
         super.onStart();
 
+
+        dbHelper helper = new dbHelper(this.getContext());
+        SQLiteDatabase db = helper.getWritableDatabase();
+
+
+
+
         //초기 달력 세팅
         TextView texMon = (TextView)getView().findViewById(R.id.month);
         TextView texYear = (TextView)getView().findViewById(R.id.year);
         texMon.setText(retMon(calMonth));
         texYear.setText(Integer.toString(calYear));
+        /*빈 칸*/
         for(int i = 0; i<calStart; i++){
-            adapter.addItem(new Griditem(" ", " ", 0));
+            adapter.addItem(new Griditem(calYear, calMonth," ", " ", 0));
         }
-        for(int j = 1; j<=calLastDay; j++){
-            int ranFeel = (int)(Math.random()*6);
-            int ranLow = (int)(Math.random()*10)+5;
-            int ranHigh = (int)(Math.random()*10)+15;
-            adapter.addItem(new Griditem(Integer.toString(j), Integer.toString(ranLow)+"°C/"+Integer.toString(ranHigh)+"°C", imgList[ranFeel]));
+        /*날짜 및 상태 출력*/
+        dateStart = calYear*10000 + (calMonth+1)*100;
+        dateEnd = calLastDayOfMonth[calMonth]+dateStart;
 
+        Cursor cursor;
+        cursor = db.rawQuery("SELECT * FROM record WHERE date_num > "+dateStart+" and date_num <= "+dateEnd+";", null);
+        int cnt_cur = 1;
+
+        int count = cursor.getCount();
+        String date_num, satisf, max_tem = null, min_tem;
+        if(count==0){
+            for(int j = 1; j<=calLastDay; j++){
+                adapter.addItem(new Griditem(calYear, calMonth,Integer.toString(j), "NO DATA", imgList[0]));
+            }
         }
+        else{
+            cursor.moveToNext();
+            for(int j = 1; j<=calLastDay; j++) {
+                date_num = cursor.getString(cursor.getColumnIndex("date_num"));
+
+                if (Integer.parseInt(date_num) == (dateStart + j)) {
+                    satisf = cursor.getString(cursor.getColumnIndex("satisf"));
+                    max_tem = cursor.getString(cursor.getColumnIndex("max_tem"));
+                    min_tem = cursor.getString(cursor.getColumnIndex("min_tem"));
+                    Log.v("Debug+query", satisf + ", " + max_tem + ", " + min_tem);
+                    adapter.addItem(new Griditem(calYear, calMonth,Integer.toString(j), max_tem + "°C/" + min_tem + "°C", imgList[Integer.parseInt(satisf)]));
+                    if(cnt_cur<count) cursor.moveToNext();
+                    cnt_cur++;
+                }
+
+                else {
+                    adapter.addItem(new Griditem(calYear, calMonth,Integer.toString(j), "NO DATA", imgList[0]));
+                }
+
+            }
+        }
+
 
         //버튼 처리
         //next 버튼
@@ -148,20 +191,53 @@ public class Diary extends Fragment {
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                moveMonth(1);
+                moveMonth(1); //한 달 뒤로
                 int cnt = adapter.getCount();
                 for(int i = cnt-1; i>=0; i--){
                     adapter.delItem(i);
                 }
+                /*공백 출력*/
                 for(int i = 0; i<calStart; i++){
-                    adapter.addItem(new Griditem(" ", " ", 0));
+                    adapter.addItem(new Griditem(calYear, calMonth," ", " ", 0));
                 }
-                for(int j = 1; j<=calLastDay; j++){
-                    int ranFeel = (int)(Math.random()*6);
-                    int ranLow = (int)(Math.random()*10)+5;
-                    int ranHigh = (int)(Math.random()*10)+15;
-                    adapter.addItem(new Griditem(Integer.toString(j), Integer.toString(ranLow)+"°C/"+Integer.toString(ranHigh)+"°C", imgList[ranFeel]));
+
+                /*날짜 및 상태 출력*/
+                dateStart = calYear*10000 + (calMonth+1)*100;
+                dateEnd = calLastDayOfMonth[calMonth]+dateStart;
+
+                Cursor cursor;
+                cursor = db.rawQuery("SELECT * FROM record WHERE date_num > "+dateStart+" and date_num <= "+dateEnd+";", null);
+                int cnt_cur = 1;
+
+                int count = cursor.getCount();
+                String date_num, satisf, max_tem = null, min_tem;
+                if(count==0){
+                    for(int j = 1; j<=calLastDay; j++){
+                        adapter.addItem(new Griditem(calYear, calMonth,Integer.toString(j), "NO DATA", imgList[0]));
+                    }
                 }
+                else{
+                    cursor.moveToNext();
+                    for(int j = 1; j<=calLastDay; j++) {
+                        date_num = cursor.getString(cursor.getColumnIndex("date_num"));
+
+                        if (Integer.parseInt(date_num) == (dateStart + j)) {
+                            satisf = cursor.getString(cursor.getColumnIndex("satisf"));
+                            max_tem = cursor.getString(cursor.getColumnIndex("max_tem"));
+                            min_tem = cursor.getString(cursor.getColumnIndex("min_tem"));
+                            Log.v("Debug+query", satisf + ", " + max_tem + ", " + min_tem);
+                            adapter.addItem(new Griditem(calYear, calMonth,Integer.toString(j), max_tem + "°C/" + min_tem + "°C", imgList[Integer.parseInt(satisf)]));
+                            if(cnt_cur<count) cursor.moveToNext();
+                            cnt_cur++;
+                        }
+
+                        else {
+                            adapter.addItem(new Griditem(calYear, calMonth,Integer.toString(j), "NO DATA", imgList[0]));
+                        }
+
+                    }
+                }
+
                 texYear.setText(Integer.toString(calYear));
                 texMon.setText(retMon(calMonth));
                 adapter.notifyDataSetChanged();
@@ -177,13 +253,43 @@ public class Diary extends Fragment {
                     adapter.delItem(i);
                 }
                 for(int i = 0; i<calStart; i++){ //빈칸
-                    adapter.addItem(new Griditem(" ", " ", 0));
+                    adapter.addItem(new Griditem(calYear, calMonth," ", " ", 0));
                 }
-                for(int j = 1; j<=calLastDay; j++){ //달력에 맞게 날짜, 이미지, 온도 출력력
-                   int ranFeel = (int)(Math.random()*6);
-                    int ranLow = (int)(Math.random()*10)+5;
-                    int ranHigh = (int)(Math.random()*10)+15;
-                    adapter.addItem(new Griditem(Integer.toString(j), Integer.toString(ranLow)+"°C/"+Integer.toString(ranHigh)+"°C", imgList[ranFeel]));
+                /*날짜 및 상태 출력*/
+                dateStart = calYear*10000 + (calMonth+1)*100;
+                dateEnd = calLastDayOfMonth[calMonth]+dateStart;
+
+                Cursor cursor;
+                cursor = db.rawQuery("SELECT * FROM record WHERE date_num > "+dateStart+" and date_num <= "+dateEnd+";", null);
+                int cnt_cur = 1;
+
+                int count = cursor.getCount();
+                String date_num, satisf, max_tem = null, min_tem;
+                if(count==0){
+                    for(int j = 1; j<=calLastDay; j++){
+                        adapter.addItem(new Griditem(calYear, calMonth,Integer.toString(j), "NO DATA", imgList[0]));
+                    }
+                }
+                else{
+                    cursor.moveToNext();
+                    for(int j = 1; j<=calLastDay; j++) {
+                        date_num = cursor.getString(cursor.getColumnIndex("date_num"));
+
+                        if (Integer.parseInt(date_num) == (dateStart + j)) {
+                            satisf = cursor.getString(cursor.getColumnIndex("satisf"));
+                            max_tem = cursor.getString(cursor.getColumnIndex("max_tem"));
+                            min_tem = cursor.getString(cursor.getColumnIndex("min_tem"));
+                            Log.v("Debug+query", satisf + ", " + max_tem + ", " + min_tem);
+                            adapter.addItem(new Griditem(calYear, calMonth, Integer.toString(j), max_tem + "°C/" + min_tem + "°C", imgList[Integer.parseInt(satisf)]));
+                            if(cnt_cur<count) cursor.moveToNext();
+                            cnt_cur++;
+                        }
+
+                        else {
+                            adapter.addItem(new Griditem(calYear, calMonth,Integer.toString(j), "NO DATA", imgList[0]));
+                        }
+
+                    }
                 }
                 texYear.setText(Integer.toString(calYear));
                 texMon.setText(retMon(calMonth));
@@ -193,46 +299,12 @@ public class Diary extends Fragment {
 
     }
 
-/*
-    @Override
-    public void onStart()
-    {
-        super.onStart();
-        //setContentView(R.layout.fragment_diary);
-        //TextView textView = v.findViewById(R.id.testdiary);
-        CalendarView cal = (CalendarView)v.findViewById(R.id.calendarView);
-        Calendar getcal = Calendar.getInstance();
-        y = getcal.get(Calendar.YEAR);
-        m = getcal.get(Calendar.MONTH)+1;
-        d = getcal.get(Calendar.DATE);
-
-        cal.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
-
-            @Override
-            public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
-                month +=1;
-                y = year;
-                m = month;
-                d = dayOfMonth;
-
-                //textView.setText(String.format("%d/%d/%d", year, month, dayOfMonth));
-
-            }
-
-        });
-
-    Button historybutton = (Button) v.findViewById(R.id.his_button);
-        historybutton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity().getApplicationContext(), SearchWindow.class);
-                intent.putExtra("year", y);
-                intent.putExtra("month", m);
-                intent.putExtra("day", d);
-                startActivity(intent);
-            }
-
-        });
+    public int getYear(){
+        return calYear;
     }
-*/
+    public int getMonth(){
+        return calMonth;
+    }
+
+
 }

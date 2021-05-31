@@ -3,6 +3,7 @@ package com.example.looknote;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
@@ -85,6 +86,37 @@ public class InputWindow extends AppCompatActivity {
 
         TextView dateText = (TextView)findViewById(R.id.date);
         dateText.setText(mon+" "+idate);
+
+        dbHelper helper = new dbHelper(this);
+        SQLiteDatabase db = helper.getWritableDatabase();
+        Cursor cursor;
+        int thisday = iyear*10000+imonth*100+idate;
+        TextView topText = (TextView)findViewById(R.id.top_pad);
+        TextView downText = (TextView)findViewById(R.id.bottom_pad);
+        TextView accText = (TextView)findViewById(R.id.acc_pad);
+        TextView diaryText = (TextView)findViewById(R.id.note_pad);
+        cursor = db.rawQuery("SELECT * FROM record WHERE date_num = "+thisday+";", null);
+
+        int count = cursor.getCount();
+        if(cursor.getCount()==0){
+            topText.setText(null);
+            downText.setText(null);
+            accText.setText(null);
+            diaryText.setText(null);
+        }
+        else{
+            cursor.moveToNext();
+            String top_c, bottom_c, acc, diary;
+            top_c = cursor.getString(cursor.getColumnIndex("top_c"));
+            bottom_c = cursor.getString(cursor.getColumnIndex("bottom_c"));
+            acc = cursor.getString(cursor.getColumnIndex("acc"));
+            diary = cursor.getString(cursor.getColumnIndex("diary"));
+
+            topText.setText(top_c);
+            downText.setText(bottom_c);
+            accText.setText(acc);
+            diaryText.setText(diary);
+        }
     }
 
     public void satisOnclick(View v)

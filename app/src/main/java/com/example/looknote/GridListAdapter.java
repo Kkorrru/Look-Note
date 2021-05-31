@@ -51,9 +51,12 @@ public class GridListAdapter extends BaseAdapter {
         TextView numberText = convertView.findViewById(R.id.degreeText);
         ImageView feelImg = convertView.findViewById(R.id.feelImg);
 
-        nameText.setText(griditem.getName());
-        numberText.setText(griditem.getNumber());
+        nameText.setText(griditem.getDay());
+        numberText.setText(griditem.getDegree());
         feelImg.setImageResource(griditem.getImgno());
+
+        GridClickListener gridClickListener = new GridClickListener(context, griditem.getYear(), griditem.getMonth(), griditem.getDay(), griditem.getDegree(), griditem.getImgno());
+        convertView.setOnClickListener(gridClickListener);
 
         return convertView;
     }
