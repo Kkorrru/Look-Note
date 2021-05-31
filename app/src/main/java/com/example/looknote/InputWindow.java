@@ -3,9 +3,11 @@ package com.example.looknote;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 public class InputWindow extends AppCompatActivity {
@@ -14,10 +16,23 @@ public class InputWindow extends AppCompatActivity {
     int imonth;
     int idate;
 
+    int todayn;
+
+    int satisnum;
+
+    EditText toppad;
+    EditText bottompad;
+    EditText accpad;
+    EditText notepad;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_input_window);
+
+        toppad = (EditText) findViewById(R.id.top_pad);
+        bottompad = (EditText) findViewById(R.id.bottom_pad);
+        accpad = (EditText) findViewById(R.id.acc_pad);
+        notepad = (EditText) findViewById(R.id.note_pad);
 
         Button saveButton = (Button) findViewById(R.id.save_button);
         saveButton.setOnClickListener(new View.OnClickListener() {
@@ -37,6 +52,10 @@ public class InputWindow extends AppCompatActivity {
         imonth = intent.getExtras().getInt("month");
         idate = intent.getExtras().getInt("day");
         String mon = null;
+
+        todayn = iyear * 10000;
+        todayn += imonth * 100;
+        todayn += idate;
 
         if(imonth == 1){
             mon = "January";
@@ -67,4 +86,49 @@ public class InputWindow extends AppCompatActivity {
         TextView dateText = (TextView)findViewById(R.id.date);
         dateText.setText(mon+" "+idate);
     }
+
+    public void satisOnclick(View v)
+    {
+        switch (v.getId())
+        {
+            case R.id.sat_cold:
+                satisnum=1;
+            case R.id.sat_cool:
+                satisnum=2;
+            case R.id.sat_nice:
+                satisnum=3;
+            case R.id.sat_warm:
+                satisnum=4;
+            case R.id.sat_hot:
+                satisnum=5;
+
+        }
+    }
+
+    public void saveOnclick(View v)
+    {
+        dbHelper helper = new dbHelper(this.getApplicationContext());
+        SQLiteDatabase db;
+        db = helper.getWritableDatabase();
+
+        String toppads = toppad.getText().toString();
+        String bottompads = toppad.getText().toString();
+        String accpads = toppad.getText().toString();
+        String notepads = toppad.getText().toString();
+
+        //DB에서 날짜 서치해서 온도와 sky값 가져와서 저장한 후에 그 라인 없애고 diary 내용 추가해서 넣기
+        //db.execSQL("INSERT INTO record VALUES (null, '"+todayn+"', '"+satisnum+"', '"+toppads+"', '"+bottompads+"', '"+accpads+"', '"+notepads+"', '0', '0', '0')");
+    }
 }
+
+/* (date_num, satisf, top_c, bottom_c, acc, diary, max_tem, min_tem, sky)
+ * date_num: INTEGER
+ * satisf: INTEGER
+ * top_c: TEXT
+ * bottom_c: TEXT
+ * acc: TEXT
+ * diary: TEXT
+ * max_tem: REAL
+ * min_tem: REAL
+ * sky: INTEGER
+ */
