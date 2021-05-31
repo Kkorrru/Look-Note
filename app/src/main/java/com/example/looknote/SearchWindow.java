@@ -3,9 +3,12 @@ package com.example.looknote;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class SearchWindow extends AppCompatActivity{
@@ -31,19 +34,32 @@ public class SearchWindow extends AppCompatActivity{
 
             }
         });
+
+        Button backButton = (Button) findViewById(R.id.button_back);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(intent);
+            }
+        });
+
     }
+
 
 
     @Override
     public void onStart()
     {
+
+
         super.onStart();
         Intent intent = getIntent();
         mmyear = intent.getExtras().getInt("year");
         mmmonth = intent.getExtras().getInt("month");
         mmdate = intent.getExtras().getInt("day");
-        String mon = null;
 
+        String mon = null;
         if(mmmonth == 1){
             mon = "January";
         }else if(mmmonth == 2){
@@ -72,5 +88,80 @@ public class SearchWindow extends AppCompatActivity{
 
         TextView dateText = (TextView)findViewById(R.id.date);
         dateText.setText(mon+" "+mmdate);
+
+        dbHelper helper = new dbHelper(this);
+        SQLiteDatabase db = helper.getWritableDatabase();
+        Cursor cursor;
+        int thisday = mmyear*10000+mmmonth*100+mmdate;
+        cursor = db.rawQuery("SELECT * FROM record WHERE date_num = "+thisday+";", null);
+        cursor.moveToNext();
+        String date_num, satisf, top_c, bottom_c, acc, diary, max_tem = null, min_tem, sky;
+        date_num = cursor.getString(cursor.getColumnIndex("date_num"));
+        satisf = cursor.getString(cursor.getColumnIndex("satisf"));
+        top_c = cursor.getString(cursor.getColumnIndex("top_c"));
+        bottom_c = cursor.getString(cursor.getColumnIndex("bottom_c"));
+        acc = cursor.getString(cursor.getColumnIndex("acc"));
+        diary = cursor.getString(cursor.getColumnIndex("diary"));
+        max_tem = cursor.getString(cursor.getColumnIndex("max_tem"));
+        min_tem = cursor.getString(cursor.getColumnIndex("min_tem"));
+        sky = cursor.getString(cursor.getColumnIndex("sky"));
+
+        /*표정 세팅*/
+        ImageView satImage = (ImageView)findViewById(R.id.face);
+        if(satisf.equals("0")) satImage.setImageResource(R.drawable.none_big);
+        else if(satisf.equals("1")) satImage.setImageResource(R.drawable.cold_big);
+        else if(satisf.equals("2")) satImage.setImageResource(R.drawable.cool_big);
+        else if(satisf.equals("3")) satImage.setImageResource(R.drawable.nice_big);
+        else if(satisf.equals("4")) satImage.setImageResource(R.drawable.warm_big);
+        else if(satisf.equals("5")) satImage.setImageResource(R.drawable.hot_big);
+
+        /*하늘 세팅*/
+        ImageView skyImage = (ImageView)findViewById(R.id.weather);
+        switch (sky) {
+            case "1": // 비
+                skyImage.setImageResource(R.drawable.rain);
+                break;
+            case "2": // 비/눈
+                skyImage.setImageResource(R.drawable.rainnsnow);
+                break;
+            case "3": // 눈
+                skyImage.setImageResource(R.drawable.snow);
+                break;
+            case "4": // 소나기
+                skyImage.setImageResource(R.drawable.shower);
+                break;
+            case "5": // 맑음 5
+                skyImage.setImageResource(R.drawable.sunny);
+                break;
+            case "7": // 구름 많음 7
+                skyImage.setImageResource(R.drawable.cloudy);
+                break;
+            case "8": // 흐림 8
+                skyImage.setImageResource(R.drawable.blur);
+                break;
+        }
+
+        /*기온 세팅*/
+        TextView tempText = (TextView)findViewById(R.id.temperature);
+        tempText.setText(max_tem+"°C/"+min_tem+"°C");
+
+        /*상의 세팅*/
+        TextView topText = (TextView)findViewById(R.id.upcloth);
+        if(top_c == null) topText.setText(" ");
+        else topText.setText(top_c);
+
+        /*하의 세팅*/
+        TextView downText = (TextView)findViewById(R.id.downcloth);
+        downText.setText(bottom_c);
+
+        /*악세서리 세팅*/
+        TextView accText = (TextView)findViewById(R.id.accer);
+        accText.setText(acc);
+
+        /*일기 세팅*/
+        TextView diaryText = (TextView)findViewById(R.id.recording);
+        diaryText.setText(diary);
+
+
     }
 }
