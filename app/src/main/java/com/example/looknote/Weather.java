@@ -3,6 +3,7 @@ package com.example.looknote;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -14,30 +15,40 @@ import android.location.LocationManager;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.work.WorkManager;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.w3c.dom.Text;
+
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 import static com.example.looknote.GetWeather.max_tem;
+import static com.example.looknote.GetWeather.periodicWorkRequest;
 
 
 public class Weather extends Fragment {
 
     View v;
-    GetWeather gw = new GetWeather();
+    GetWeather gw;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -49,9 +60,9 @@ public class Weather extends Fragment {
                              Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         v = inflater.inflate(R.layout.fragment_weather, container, false); // Inflate the layout for this fragment
+        gw = new GetWeather();
 
-        getLocation();
-
+        gw.getDateTime();
         UpdateView();
 
         return v;
@@ -61,64 +72,91 @@ public class Weather extends Fragment {
         dbHelper helper = new dbHelper(this.getContext());
         SQLiteDatabase db = helper.getWritableDatabase();
 
-        // 현재 날씨
-        Cursor cursor;
-        cursor = db.rawQuery("SELECT * FROM record WHERE date_num="+gw.todayDate+"", null);
-        String date_num, satisf, top_c, bottom_c, acc, diary, max_tem = null, min_tem, sky;
-        while (cursor.moveToNext()) {
-            date_num = cursor.getString(cursor.getColumnIndex("date_num"));
-            satisf = cursor.getString(cursor.getColumnIndex("satisf"));
-            top_c = cursor.getString(cursor.getColumnIndex("top_c"));
-            bottom_c = cursor.getString(cursor.getColumnIndex("bottom_c"));
-            acc = cursor.getString(cursor.getColumnIndex("acc"));
-            diary = cursor.getString(cursor.getColumnIndex("diary"));
-            max_tem = cursor.getString(cursor.getColumnIndex("max_tem"));
-            min_tem = cursor.getString(cursor.getColumnIndex("min_tem"));
-            sky = cursor.getString(cursor.getColumnIndex("sky"));
-            Log.v("Debug+query", date_num + ", " + satisf + ", " + top_c + ", " + bottom_c + ", " + acc + ", " + diary + ", " + max_tem + ", " + min_tem + ", " + sky);
+        getLocation();
 
-            TextView textView;
-            textView = v.findViewById(R.id.todayTMN);
-            textView.setText(min_tem + " ºC");
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                // 현재 위치
+                TextView textView = v.findViewById(R.id.todayLocation); textView.setText(gw.todayLocation);
 
-            textView = v.findViewById(R.id.todayTMX);
-            textView.setText(max_tem + " ºC");
-
-            textView = v.findViewById(R.id.todayT3H);
-            textView.setText(GetWeather.today_tem + " ºC");
-
-            ImageView imageView;
-            imageView = (ImageView) v.findViewById(R.id.todaySKY);
-            switch (GetWeather.sky) {
-                case 1: // 비
-                    imageView.setImageResource(R.drawable.rain);
-                    break;
-                case 2: // 비/눈
-                    imageView.setImageResource(R.drawable.rainnsnow);
-                    break;
-                case 3: // 눈
-                    imageView.setImageResource(R.drawable.snow);
-                    break;
-                case 4: // 소나기
-                    imageView.setImageResource(R.drawable.shower);
-                    break;
-                case 5: // 맑음 5
-                    imageView.setImageResource(R.drawable.sunny);
-                    break;
-                case 7: // 구름 많음 7
-                    imageView.setImageResource(R.drawable.cloudy);
-                    break;
-                case 8: // 흐림 8
-                    imageView.setImageResource(R.drawable.blur);
-                    break;
+                // 현재 날씨(T3H, SKY)
+                if (Integer.parseInt(gw.todayHour) >= 0 && Integer.parseInt(gw.todayHour) < 3) gw.mpageNo = "69";
+                else if (Integer.parseInt(gw.todayHour) >= 3 && Integer.parseInt(gw.todayHour) < 6) gw.mpageNo = "78";
+                else if (Integer.parseInt(gw.todayHour) >= 6 && Integer.parseInt(gw.todayHour) < 9) gw.mpageNo = "7";
+                else if (Integer.parseInt(gw.todayHour) >= 9 && Integer.parseInt(gw.todayHour) < 12) gw.mpageNo = "17";
+                else if (Integer.parseInt(gw.todayHour) >= 12 && Integer.parseInt(gw.todayHour) < 15) gw.mpageNo = "28";
+                else if (Integer.parseInt(gw.todayHour) >= 15 && Integer.parseInt(gw.todayHour) < 18) gw.mpageNo = "37";
+                else if (Integer.parseInt(gw.todayHour) >= 18 && Integer.parseInt(gw.todayHour) < 21) gw.mpageNo = "49";
+                else if (Integer.parseInt(gw.todayHour) >= 21) gw.mpageNo = "58";
+                gw.getWeather();
             }
-        }
+        }, 5500); // 5.5초 기다리고 위에 코드들 실행
+
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                // 현재 날씨
+                Cursor cursor = db.rawQuery("SELECT * FROM record WHERE date_num="+gw.todayDate+"", null); // 중복 방지
+                if (!cursor.moveToFirst())
+                {
+                    db.execSQL("INSERT INTO record VALUES (null, '"+Integer.parseInt(gw.todayDate)+"', 0, '0', '0', '0', '0', '"+gw.max_tem+"', '"+gw.min_tem+"', '"+gw.sky+"')");
+                    Log.d("DebugInsert(Fore)", gw.todayDate + gw.max_tem + gw.min_tem + gw.sky);
+                }
+
+                String date_num, satisf, top_c, bottom_c, acc, diary, max_tem = null, min_tem, sky;
+                {
+                    date_num = cursor.getString(cursor.getColumnIndex("date_num"));
+                    satisf = cursor.getString(cursor.getColumnIndex("satisf"));
+                    top_c = cursor.getString(cursor.getColumnIndex("top_c"));
+                    bottom_c = cursor.getString(cursor.getColumnIndex("bottom_c"));
+                    acc = cursor.getString(cursor.getColumnIndex("acc"));
+                    diary = cursor.getString(cursor.getColumnIndex("diary"));
+                    max_tem = cursor.getString(cursor.getColumnIndex("max_tem"));
+                    min_tem = cursor.getString(cursor.getColumnIndex("min_tem"));
+                    sky = cursor.getString(cursor.getColumnIndex("sky"));
+                    Log.v("Debug-query", date_num + ", " + satisf + ", " + top_c + ", " + bottom_c + ", " + acc + ", " + diary + ", " + max_tem + ", " + min_tem + ", " + sky);
+
+                    TextView textView;
+                    textView = v.findViewById(R.id.todayTMN); textView.setText(min_tem + " ºC");
+                    textView = v.findViewById(R.id.todayTMX); textView.setText(max_tem + " ºC");
+                    textView = v.findViewById(R.id.todayT3H); textView.setText(GetWeather.today_tem + " ºC");
+
+                    ImageView imageView;
+                    imageView = (ImageView) v.findViewById(R.id.todaySKY);
+                    switch (sky) {
+                        case "1": // 비
+                            imageView.setImageResource(R.drawable.rain);
+                            break;
+                        case "2": // 비/눈
+                            imageView.setImageResource(R.drawable.rainnsnow);
+                            break;
+                        case "3": // 눈
+                            imageView.setImageResource(R.drawable.snow);
+                            break;
+                        case "4": // 소나기
+                            imageView.setImageResource(R.drawable.shower);
+                            break;
+                        case "5": // 맑음 5
+                            imageView.setImageResource(R.drawable.sunny);
+                            break;
+                        case "7": // 구름 많음 7
+                            imageView.setImageResource(R.drawable.cloudy);
+                            break;
+                        case "8": // 흐림 8
+                            imageView.setImageResource(R.drawable.blur);
+                            break;
+                    }
+                }
+            }
+        }, 12000);
 
         // 과거 비슷한 날씨에는?
-        cursor = db.rawQuery("SELECT * FROM record WHERE max_tem < max_tem + 1 and max_tem > max_tem - 1 ", null);
+        Cursor cursor = db.rawQuery("SELECT * FROM record WHERE max_tem < max_tem + 1 and max_tem > max_tem - 1 ", null);
 
         String[] from = new String[]{ "date_num", "max_tem", "min_tem", "sky", "top_c", "bottom_c", "acc" };
-        int[] to = { R.id.textView, R.id.textView2, R.id.textView19, R.id.textView5, R.id.top_pad2, R.id.top_pad5, R.id.top_pad6 };
+        int[] to = { R.id.textView, R.id.textView2, R.id.textView19, R.id.textView5, R.id.textView20, R.id.textView21, R.id.textView22 };
         SimpleCursorAdapter adapter = new SimpleCursorAdapter(this.getContext(), R.layout.listview_recommand, cursor, from, to);
         ListView listView = (ListView)v.findViewById(R.id.recommand_listvew);
         listView.setAdapter(adapter);
@@ -126,14 +164,13 @@ public class Weather extends Fragment {
 
     void getLocation() {
         // ==================위치==================
-        requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, /*MY_PERMISSIONS_REQUEST_LOCATION*/10);
+        //requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, /*MY_PERMISSIONS_REQUEST_LOCATION*/10);
         LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
 
         List<Address>[] addresses = new List[]{null};
         Geocoder geocoder = new Geocoder(this.getContext(), Locale.getDefault());
 
         LocationListener locationListener = new LocationListener() {
-            @SuppressLint("SetTextI18n")
             public void onLocationChanged(Location location) {
                 gw.latitude = location.getLatitude();
                 gw.longitude = location.getLongitude();
@@ -147,6 +184,7 @@ public class Weather extends Fragment {
                     gw.todayLocation = gw.todayLocation.substring(gw.todayLocation.indexOf(" ") + 1);
                     gw.todayLocation = gw.todayLocation.substring( 0, gw.todayLocation.indexOf(" ") + 1 + gw.todayLocation.substring(gw.todayLocation.indexOf(" ") + 1).indexOf(" ") );
 
+                    gw.hasLocation = true;
                     switch (gw.todayLocation.substring(0, 3))
                     {
                         case "서울특":
@@ -214,31 +252,21 @@ public class Weather extends Fragment {
                             gw.mnx = "52";
                             gw.mny = "38";
                             break;
+                        default:
+                            gw.hasLocation = false;
                     }
-
-                    TextView tv = (TextView) v.findViewById(R.id.todayLocation);
-                    tv.setText(gw.todayLocation);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-//                gw.mpageNo = "8";
-//                gw.getWeatherInfo();
-                gw.hasLocation = true;
-                gw.setWorkManger();
-                UpdateView();
             }
-
             public void onStatusChanged(String provider, int status, Bundle extras) { }
-
             public void onProviderEnabled(String provider) { }
-
             public void onProviderDisabled(String provider) { }
         };
-        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            Toast.makeText(getActivity(), "First enable LOCATION ACCESS in settings.", Toast.LENGTH_LONG).show();
+        if (ActivityCompat.checkSelfPermission(this.getContext(), Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(this.getContext(), "위치 액세스 권한 항상 허용을 거부할 시 앱 이용에 제한이 있을 수 있습니다.", Toast.LENGTH_SHORT).show();
             return;
         }
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 60000, 100, locationListener);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 60000 * 60, 1000, locationListener); // 1000밀리컨드 = 1초, 1000미터 = 1키로미터
     }
 }

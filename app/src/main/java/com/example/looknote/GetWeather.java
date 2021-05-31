@@ -1,28 +1,8 @@
 package com.example.looknote;
 
-import android.Manifest;
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
-import android.database.sqlite.SQLiteOpenHelper;
-import android.location.Address;
-import android.location.Geocoder;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.AsyncTask;
-import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 import androidx.work.WorkRequest;
@@ -35,45 +15,46 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public class GetWeather {
-
-    //boolean isBackGround;
 
     // =====위치=====
     private int MY_PERMISSIONS_REQUEST_LOCATION = 10;
     // =====주소=====
     double latitude;
     double longitude;
-    String todayLocation;
+    static String todayLocation;
     // =====날씨=====
     //참고: https://m.blog.naver.com/PostView.nhn?blogId=ksseo63&logNo=221035949094&proxyReferer=https:%2F%2Fwww.google.com%2F
     private static final String WEATHER_URL = "http://apis.data.go.kr/1360000/VilageFcstInfoService/getVilageFcst";
-    private static final String SERVICE_KEY = "";
+    private static final String SERVICE_KEY = "6S0lcBiMRAFjVAw8ZZ6rbYFUawGLYfg4uF1LkmW05eidtnQrrANwIP70KKEHRoWyO2IW3gJtsBBGKJEi4%2B8gPw%3D%3D";
     WeatherInfoTask weatherTask;
 
-    View v;
-    TextView textview;
-    ImageView imageView;
+    // View v; TextView textview; ImageView imageView;
     static String todayDate;
     static String todayHour;
     String mpageNo;
     static String mnx;
     static String mny;
-    static boolean hasLocation;
 
     static double max_tem;
     static double min_tem;
     static int sky;
-    static boolean isFinish;
+    static boolean weatherIsFinish;
+    static boolean hasLocation;
     static double today_tem;
 
-    void getWeather() {
-        // ==================날씨==================
-        isFinish = false;
+    static WorkRequest periodicWorkRequest;
+
+    void setWorkManger() {
+        // =================알람===================
+        periodicWorkRequest = new PeriodicWorkRequest.Builder(UploadWorker.class, 12, TimeUnit.HOURS)
+                .build();
+        WorkManager.getInstance().enqueue(periodicWorkRequest); //Operation mWorkManager =
+    }
+
+    void getDateTime() {
         long now = System.currentTimeMillis();
         Date mDate = new Date(now);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmm");
@@ -85,16 +66,15 @@ public class GetWeather {
 
         if (Integer.parseInt(todayHour) >= 0 && Integer.parseInt(todayHour) < 6)
             todayDate = Integer.toString(Integer.parseInt(sdf.format(mDate).substring(0, 8)) - 1);
+    }
+
+    void getWeather() {
+        // ==================날씨==================
+        weatherIsFinish = false;
+        getDateTime();
 
         mpageNo = "8";
         getWeatherInfo();
-    }
-
-    void setWorkManger() {
-        // =================알람===================
-        WorkRequest periodicWorkRequest = new PeriodicWorkRequest.Builder(UploadWorker.class, 12, TimeUnit.HOURS)
-                .build();
-        WorkManager.getInstance().enqueue(periodicWorkRequest); //Operation mWorkManager =
     }
 
     void getWeatherInfo() {
@@ -115,13 +95,13 @@ public class GetWeather {
             String dataType = "XML";
             String baseDate = todayDate;
             String baseTime = "0200"; // 최저/최고 기온은 02:00에만 발표함
-            String nx = mnx;
-            String ny = mny;
+            String nx = "60";
+            String ny = "127";
 
-            if(!hasLocation)
+            if(hasLocation)
             {
-                nx = "60";
-                ny = "127";
+                nx = mnx;
+                ny = mny;
             }
 
             HttpURLConnection conn = null;
@@ -145,7 +125,7 @@ public class GetWeather {
                 conn.setRequestProperty("Content-type", "application/xml");
                 //System.out.println("Response code: " + conn.getResponseCode());
 
-                if(conn.getResponseCode() >= 200 && conn.getResponseCode() <= 300) { // 컴네에서 배웠던 그 HTTP 상태 코드
+                if(conn.getResponseCode() >= 200 && conn.getResponseCode() <= 300) { // 컴네에서 배웠던 그 HTTP 응답 상태 코드
                     rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                 } else {
                     rd = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
@@ -171,7 +151,7 @@ public class GetWeather {
                     }
                 }
             }
-            Log.d("Debug" + "Weather", String.valueOf(sb));
+            Log.d("Debug" + "Response", String.valueOf(sb));
             return String.valueOf(sb);
         }
 
@@ -183,15 +163,11 @@ public class GetWeather {
 
             if(mpageNo == "8")
             {
-//                int beginIndex = s.indexOf("<fcstValue>") + "<fcstValue>".length();
-//                int endIndex = s.indexOf("</fcstValue>");
-//
-//                min_tem = Double.parseDouble(s.substring(beginIndex, endIndex - 2));
-//                if (!isBackGround)
-//                {
-//                    textview = v.findViewById(R.id.todayTMN);
-//                    textview.setText(s.substring(beginIndex, endIndex - 2) + " ºC"); // 소숫점 없애려고 -2
-//                }
+                int beginIndex = s.indexOf("<fcstValue>") + "<fcstValue>".length();
+                int endIndex = s.indexOf("</fcstValue>");
+
+                min_tem = Double.parseDouble(s.substring(beginIndex, endIndex - 2));
+//                textview = v.findViewById(R.id.todayTMN); textview.setText(s.substring(beginIndex, endIndex - 2) + " ºC"); // 소숫점 없애려고 -2
 
                 mpageNo = "38";
                 getWeatherInfo();
@@ -204,38 +180,14 @@ public class GetWeather {
 
                 max_tem = Double.parseDouble(s.substring(beginIndex, endIndex - 2));
 
-                if (Integer.parseInt(todayHour) >= 0 && Integer.parseInt(todayHour) < 3)
-                {
-                    mpageNo = "69";
-                }
-                else if (Integer.parseInt(todayHour) >= 3 && Integer.parseInt(todayHour) < 6)
-                {
-                    mpageNo = "78";
-                }
-                else if (Integer.parseInt(todayHour) >= 6 && Integer.parseInt(todayHour) < 9)
-                {
-                    mpageNo = "7";
-                }
-                else if (Integer.parseInt(todayHour) >= 9 && Integer.parseInt(todayHour) < 12)
-                {
-                    mpageNo = "17";
-                }
-                else if (Integer.parseInt(todayHour) >= 12 && Integer.parseInt(todayHour) < 15)
-                {
-                    mpageNo = "28";
-                }
-                else if (Integer.parseInt(todayHour) >= 15 && Integer.parseInt(todayHour) < 18)
-                {
-                    mpageNo = "37";
-                }
-                else if (Integer.parseInt(todayHour) >= 18 && Integer.parseInt(todayHour) < 21)
-                {
-                    mpageNo = "49";
-                }
-                else if (Integer.parseInt(todayHour) >= 21)
-                {
-                    mpageNo = "58";
-                }
+                if (Integer.parseInt(todayHour) >= 0 && Integer.parseInt(todayHour) < 3) mpageNo = "69";
+                else if (Integer.parseInt(todayHour) >= 3 && Integer.parseInt(todayHour) < 6) mpageNo = "78";
+                else if (Integer.parseInt(todayHour) >= 6 && Integer.parseInt(todayHour) < 9) mpageNo = "7";
+                else if (Integer.parseInt(todayHour) >= 9 && Integer.parseInt(todayHour) < 12) mpageNo = "17";
+                else if (Integer.parseInt(todayHour) >= 12 && Integer.parseInt(todayHour) < 15) mpageNo = "28";
+                else if (Integer.parseInt(todayHour) >= 15 && Integer.parseInt(todayHour) < 18) mpageNo = "37";
+                else if (Integer.parseInt(todayHour) >= 18 && Integer.parseInt(todayHour) < 21) mpageNo = "49";
+                else if (Integer.parseInt(todayHour) >= 21) mpageNo = "58";
 
                 getWeatherInfo();
                 return;
@@ -263,7 +215,7 @@ public class GetWeather {
                     getWeatherInfo();
                     return;
                 }
-                isFinish = true;
+                weatherIsFinish = true;
                 return;
             }
             if(mpageNo == "6")
@@ -271,11 +223,8 @@ public class GetWeather {
                 int beginIndex = s.indexOf("<fcstValue>") + "<fcstValue>".length();
                 int endIndex = s.indexOf("</fcstValue>");
 
-                //textview = v.findViewById(R.id.todaySKY);
-                //textview.setText(s.substring(beginIndex, endIndex));
-
                 sky = Integer.parseInt(s.substring(beginIndex, endIndex)) + 4;
-                isFinish = true;
+                weatherIsFinish = true;
                 return;
             }
         }
