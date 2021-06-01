@@ -62,10 +62,14 @@ public class SearchWindow extends AppCompatActivity{
 
                 Cursor cursorss = db.rawQuery("SELECT * FROM record WHERE date_num="+todayn+"", null);
 
-                while (cursorss.moveToNext())
-                {
-                    tid = cursorss.getInt(0) ;
-                }
+                cursorss.moveToNext();
+                tid = cursorss.getInt(0) ;
+                int tmax = cursorss.getInt(7);
+                int tmin = cursorss.getInt(8);
+                int tsky = cursorss.getInt(9);
+
+                db.execSQL("INSERT INTO record VALUES (null, '"+todayn+"', 0, null, null, null, null, '"+tmax+"', '"+tmin+"', '"+tsky+"')");
+
                 db.execSQL("DELETE FROM record WHERE _id = '" + tid + "';");
 
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
