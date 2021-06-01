@@ -2,6 +2,8 @@ package com.example.looknote;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.view.View;
 import android.view.View.OnClickListener;
 
@@ -32,24 +34,29 @@ public class GridClickListener implements OnClickListener {
 
     public void onClick(View v) {
 
+
         if(!date.equals(" ")){
-            Intent intent = new Intent(context, SearchWindow.class);
+            if(degree.equals(" ")){
+                Intent intent = new Intent(context, InputWindow.class);
+                intent.putExtra("year", year);
+                intent.putExtra("month", month+1);
+                intent.putExtra("day", Integer.parseInt(date));
+                context.startActivity(intent);
 
-            intent.putExtra("year", year);
-            intent.putExtra("month", month+1);
-            intent.putExtra("day", Integer.parseInt(date));
+            }
+            else{
+                Intent intent1 = new Intent(context, SearchWindow.class);
 
-            context.startActivity(intent);
+                intent1.putExtra("year", year);
+                intent1.putExtra("month", month+1);
+                intent1.putExtra("day", Integer.parseInt(date));
+
+                context.startActivity(intent1);
+            }
+
         }
 
-        if(degree.equals(" ")){
-            Intent intent = new Intent(context, InputWindow.class);
-            intent.putExtra("year", year);
-            intent.putExtra("month", month+1);
-            intent.putExtra("day", Integer.parseInt(date));
-            context.startActivity(intent);
 
-        }
 
     }
 }
