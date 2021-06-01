@@ -40,32 +40,28 @@ public class UploadWorker extends Worker {
         // Do the work here--in this case, upload the images.
         Log.d("Debug-BackGround", "HERE");
 
-        dbHelper helper = new dbHelper(this.getApplicationContext());
-        SQLiteDatabase db = helper.getWritableDatabase();
-
-        Cursor cursor = db.rawQuery("SELECT * FROM record WHERE date_num="+gw.todayDate+"", null); // 중복 방지
-        if (cursor.moveToFirst())
-            return Result.success();
-
         // ==========위치==========
         getLocation();
 
+        dbHelper helper = new dbHelper(this.getApplicationContext());
+        SQLiteDatabase db = helper.getWritableDatabase();
 
         // ==========날씨==========
-        try {
-            Thread.sleep(5500); // 5.5초 기다리기
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        gw.getWeather();
+
 
 
         // ==========DB==========
-        while(!gw.weatherIsFinish);//gw.getWeather() 끝날 때까지 기다리기
+        while(!gw.weatherIsFinish); // gw.getWeather() 끝날 때까지 기다리기
         gw.weatherIsFinish = false;
+        Log.d("Debug-BackGround", gw.todayDate + gw.max_tem + gw.min_tem + gw.sky);
 
-        db.execSQL("INSERT INTO record VALUES (null, '"+Integer.parseInt(gw.todayDate)+"', 0, '0', '0', '0', '0', '"+gw.max_tem+"', '"+gw.min_tem+"', '"+gw.sky+"')");
-        Log.d("DebugInsert", gw.todayDate + gw.max_tem + gw.min_tem + gw.sky);
+
+        Cursor cursor = db.rawQuery("SELECT * FROM record WHERE date_num="+gw.todayDate+"", null); // 중복 방지
+        if (!cursor.moveToFirst()) {
+            db.execSQL("INSERT INTO record VALUES (null, '" + Integer.parseInt(gw.todayDate) + "', 0, '0', '0', '0', '0', '" + gw.max_tem + "', '" + gw.min_tem + "', '" + gw.sky + "')");
+            Log.d("DebugInsert", gw.todayDate + gw.max_tem + gw.min_tem + gw.sky);
+            return Result.success();
+        }
 
         // Indicate whether the work finished successfully with the Result
         return Result.success();
@@ -93,6 +89,7 @@ public class UploadWorker extends Worker {
                     gw.todayLocation = gw.todayLocation.substring(gw.todayLocation.indexOf(" ") + 1);
                     gw.todayLocation = gw.todayLocation.substring(0, gw.todayLocation.indexOf(" ") + 1 + gw.todayLocation.substring(gw.todayLocation.indexOf(" ") + 1).indexOf(" "));
 
+                    gw.hasLocation = true;
                     switch (gw.todayLocation.substring(0, 3)) {
                         case "서울특":
                             gw.mnx = "60";
@@ -162,6 +159,7 @@ public class UploadWorker extends Worker {
                         default:
                             gw.mnx = "60";
                             gw.mny = "127";
+                            gw.hasLocation = false;
                             break;
                     }
                 } catch (IOException e) {
@@ -178,13 +176,24 @@ public class UploadWorker extends Worker {
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (ActivityCompat.checkSelfPermission(thisContext, Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.checkSelfPermission(thisContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+                }
+                if (ActivityCompat.checkSelfPermission(thisContext, Manifest.permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_DENIED) {
                     //Toast.makeText(thisContext, /*"First enable LOCATION ACCESS in settings."*/"위치 액세스 권한 항상 허용을 거부할 시 앱 이용에 제한이 있을 수 있습니다.", Toast.LENGTH_SHORT).show();
                     return;
                 }
+                Log.d("Debug-BackGround", "HERE2");
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 60000 * 60, 1000, locationListener); // 1000밀리컨드 = 1초, 1000미터 = 1키로미터
             }
         }, 0);
+
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                gw.getWeather();
+            }
+        }, 5500);
     }
 }
 

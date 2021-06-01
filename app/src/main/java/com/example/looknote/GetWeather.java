@@ -49,7 +49,7 @@ public class GetWeather {
 
     void setWorkManger() {
         // =================알람===================
-        periodicWorkRequest = new PeriodicWorkRequest.Builder(UploadWorker.class, 12, TimeUnit.HOURS)
+        periodicWorkRequest = new PeriodicWorkRequest.Builder(UploadWorker.class, 15, TimeUnit.MINUTES)
                 .build();
         WorkManager.getInstance().enqueue(periodicWorkRequest); //Operation mWorkManager =
     }
@@ -64,8 +64,51 @@ public class GetWeather {
         Log.d("Debug", "todayDate: " + todayDate);
         Log.d("Debug", "todayHour: " + todayHour);
 
-        if (Integer.parseInt(todayHour) >= 0 && Integer.parseInt(todayHour) < 6)
-            todayDate = Integer.toString(Integer.parseInt(sdf.format(mDate).substring(0, 8)) - 1);
+        if (Integer.parseInt(todayHour) >= 0 && Integer.parseInt(todayHour) < 2)
+        {
+            switch (todayDate.substring(4, 8))
+            {
+                case "0101":
+                    todayDate = sdf.format(mDate).substring(0, 4) + "1231";
+                    break;
+                case "0201":
+                    todayDate = sdf.format(mDate).substring(0, 4) + "0131";
+                    break;
+                case "0301":
+                    todayDate = sdf.format(mDate).substring(0, 4) + "0228";
+                    break;
+                case "0401":
+                    todayDate = sdf.format(mDate).substring(0, 4) + "0331";
+                    break;
+                case "0501":
+                    todayDate = sdf.format(mDate).substring(0, 4) + "0430";
+                    break;
+                case "0601":
+                    todayDate = sdf.format(mDate).substring(0, 4) + "0531";
+                    break;
+                case "0701":
+                    todayDate = sdf.format(mDate).substring(0, 4) + "0630";
+                    break;
+                case "0801":
+                    todayDate = sdf.format(mDate).substring(0, 4) + "0731";
+                    break;
+                case "0901":
+                    todayDate = sdf.format(mDate).substring(0, 4) + "0831";
+                    break;
+                case "1001":
+                    todayDate = sdf.format(mDate).substring(0, 4) + "0930";
+                    break;
+                case "1101":
+                    todayDate = sdf.format(mDate).substring(0, 4) + "1031";
+                    break;
+                case "1201":
+                    todayDate = sdf.format(mDate).substring(0, 4) + "1130";
+                    break;
+                default:
+                    todayDate = Integer.toString(Integer.parseInt(sdf.format(mDate).substring(0, 8)) - 1);
+            }
+            Log.d("Debug", "todayDate2: " + todayDate.substring(4, 8));
+        }
     }
 
     void getWeather() {
@@ -180,8 +223,8 @@ public class GetWeather {
 
                 max_tem = Double.parseDouble(s.substring(beginIndex, endIndex - 2));
 
-                if (Integer.parseInt(todayHour) >= 0 && Integer.parseInt(todayHour) < 3) mpageNo = "69";
-                else if (Integer.parseInt(todayHour) >= 3 && Integer.parseInt(todayHour) < 6) mpageNo = "78";
+                if (Integer.parseInt(todayHour) >= 0 && Integer.parseInt(todayHour) < 3) mpageNo = "7";//"69";
+                else if (Integer.parseInt(todayHour) >= 3 && Integer.parseInt(todayHour) < 6) mpageNo = "7";//"78";
                 else if (Integer.parseInt(todayHour) >= 6 && Integer.parseInt(todayHour) < 9) mpageNo = "7";
                 else if (Integer.parseInt(todayHour) >= 9 && Integer.parseInt(todayHour) < 12) mpageNo = "17";
                 else if (Integer.parseInt(todayHour) >= 12 && Integer.parseInt(todayHour) < 15) mpageNo = "28";
