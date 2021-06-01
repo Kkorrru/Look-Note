@@ -75,18 +75,19 @@ public class MainActivity extends AppCompatActivity {
             editor.putBoolean("isFirst",true);
             editor.commit();
             //앱 최초 실행시 하고 싶은 작업
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_BACKGROUND_LOCATION}, /*MY_PERMISSIONS_REQUEST_LOCATION*/10);
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, /*MY_PERMISSIONS_REQUEST_LOCATION*/10);
             GetWeather gw = new GetWeather();
             gw.setWorkManger();
         }else{
             Log.d("Debug-Is first Time?", "not first");
         }
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED)
-        {
-            Toast.makeText(this, /*"First enable LOCATION ACCESS in settings."*/"위치 액세스 권한 항상 허용을 거부할 시 앱 이용에 제한이 있을 수 있습니다.", Toast.LENGTH_SHORT).show();
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_BACKGROUND_LOCATION}, /*MY_PERMISSIONS_REQUEST_LOCATION*/10);
-        }
+//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED)
+//        {
+//            Toast.makeText(this, /*"First enable LOCATION ACCESS in settings."*/"설정에서 위치 액세스 권한 항상 허용을 거부할 시 앱 이용에 제한이 있을 수 있습니다.", Toast.LENGTH_LONG).show();
+//            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_BACKGROUND_LOCATION}, /*MY_PERMISSIONS_REQUEST_LOCATION*/10);
+//        }
 
         bottomNavigationView = findViewById(R.id.bottomNavi);
         //bottomNavigationView.setItemIconTintList(null);

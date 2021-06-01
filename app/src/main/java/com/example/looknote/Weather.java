@@ -28,6 +28,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
@@ -42,6 +43,7 @@ import java.util.List;
 import java.util.Locale;
 
 import static com.example.looknote.GetWeather.max_tem;
+import static com.example.looknote.GetWeather.min_tem;
 import static com.example.looknote.GetWeather.periodicWorkRequest;
 
 
@@ -69,6 +71,7 @@ public class Weather extends Fragment {
     }
 
     void UpdateView() {
+        Log.d("Debug-ForeGround", "HERE");
         dbHelper helper = new dbHelper(this.getContext());
         SQLiteDatabase db = helper.getWritableDatabase();
 
@@ -101,11 +104,13 @@ public class Weather extends Fragment {
                 Cursor cursor = db.rawQuery("SELECT * FROM record WHERE date_num="+gw.todayDate+"", null); // 중복 방지
                 if (!cursor.moveToFirst())
                 {
-                    db.execSQL("INSERT INTO record VALUES (null, '"+Integer.parseInt(gw.todayDate)+"', 0, '0', '0', '0', '0', '"+gw.max_tem+"', '"+gw.min_tem+"', '"+gw.sky+"')");
-                    Log.d("DebugInsert(Fore)", gw.todayDate + gw.max_tem + gw.min_tem + gw.sky);
+                    db.execSQL("INSERT INTO record VALUES (null, '"+Integer.parseInt(gw.todayDate)+"', 0, '0', '0', '0', '0', '"+gw.max_tem+"', '"+ min_tem+"', '"+gw.sky+"')");
+                    Log.d("DebugInsert(Fore)", gw.todayDate + gw.max_tem + min_tem + gw.sky);
                 }
 
+                cursor = db.rawQuery("SELECT * FROM record WHERE date_num="+gw.todayDate+"", null); // 중복 방지
                 String date_num, satisf, top_c, bottom_c, acc, diary, max_tem = null, min_tem, sky;
+                cursor.moveToFirst(); // 처음엔 -1을 가르키고 있기 때문에 0(first)으로 이동 안 시켜주면 에러 남
                 {
                     date_num = cursor.getString(cursor.getColumnIndex("date_num"));
                     satisf = cursor.getString(cursor.getColumnIndex("satisf"));
@@ -150,16 +155,45 @@ public class Weather extends Fragment {
                     }
                 }
             }
-        }, 12000);
+        }, 10000);
 
         // 과거 비슷한 날씨에는?
-        Cursor cursor = db.rawQuery("SELECT * FROM record WHERE max_tem < max_tem + 1 and max_tem > max_tem - 1 ", null);
+//        Cursor cursor = db.rawQuery("SELECT * FROM record WHERE max_tem < max_tem + 1 and max_tem > max_tem - 1 ", null);
+//
+//        String[] from = new String[]{ "date_num", "max_tem", "min_tem", "sky", "top_c", "bottom_c", "acc" };
+//        int[] to = { R.id.textView, R.id.textView2, R.id.textView19, R.id.textView5, R.id.textView20, R.id.textView21, R.id.textView22 };
+//        SimpleCursorAdapter adapter = new SimpleCursorAdapter(this.getContext(), R.layout.listview_recommand, cursor, from, to);
+//        ListView listView = (ListView)v.findViewById(R.id.recommand_listvew);
+//        listView.setAdapter(adapter);
 
-        String[] from = new String[]{ "date_num", "max_tem", "min_tem", "sky", "top_c", "bottom_c", "acc" };
-        int[] to = { R.id.textView, R.id.textView2, R.id.textView19, R.id.textView5, R.id.textView20, R.id.textView21, R.id.textView22 };
-        SimpleCursorAdapter adapter = new SimpleCursorAdapter(this.getContext(), R.layout.listview_recommand, cursor, from, to);
-        ListView listView = (ListView)v.findViewById(R.id.recommand_listvew);
-        listView.setAdapter(adapter);
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                ListView listView = (ListView)v.findViewById(R.id.recommand_listvew);
+                ListViewAdapter adapter = new ListViewAdapter();
+
+                Cursor cursor = db.rawQuery("SELECT * FROM record WHERE max_tem < "+gw.max_tem+" + 2 and max_tem > "+gw.max_tem+" - 2 " +
+                        "and min_tem < "+gw.min_tem+" + 2 and min_tem > "+gw.min_tem+" - 2 " +
+                        "and max_tem > "+gw.today_tem+" and min_tem < "+gw.today_tem+" " +
+                        "and date_num != "+gw.todayDate+"", null);
+                String date_num, satisf, top_c, bottom_c, acc, diary, max_tem, min_tem, sky;
+                while(cursor.moveToNext())
+                {
+                    date_num = cursor.getString(cursor.getColumnIndex("date_num"));
+                    satisf = cursor.getString(cursor.getColumnIndex("satisf"));
+                    top_c = cursor.getString(cursor.getColumnIndex("top_c"));
+                    bottom_c = cursor.getString(cursor.getColumnIndex("bottom_c"));
+                    acc = cursor.getString(cursor.getColumnIndex("acc"));
+                    diary = cursor.getString(cursor.getColumnIndex("diary"));
+                    max_tem = cursor.getString(cursor.getColumnIndex("max_tem"));
+                    min_tem = cursor.getString(cursor.getColumnIndex("min_tem"));
+                    sky = cursor.getString(cursor.getColumnIndex("sky"));
+
+                    adapter.addItem(new ListViewitem(date_num, satisf, top_c, bottom_c, acc, diary, max_tem, min_tem, sky));
+                }
+                listView.setAdapter(adapter);
+            }
+        }, 11000);
     }
 
     void getLocation() {
@@ -263,8 +297,14 @@ public class Weather extends Fragment {
             public void onProviderEnabled(String provider) { }
             public void onProviderDisabled(String provider) { }
         };
-        if (ActivityCompat.checkSelfPermission(this.getContext(), Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            Toast.makeText(this.getContext(), "위치 액세스 권한 항상 허용을 거부할 시 앱 이용에 제한이 있을 수 있습니다.", Toast.LENGTH_SHORT).show();
+        if (ActivityCompat.checkSelfPermission(this.getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+        }
+        if(ActivityCompat.checkSelfPermission(this.getContext(), Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED)
+        {
+            Toast.makeText(this.getContext(), "위치 액세스 권한 항상 허용을 거부할 시 앱 이용에 제한이 있습니다.", Toast.LENGTH_LONG).show();
+
+            ActivityCompat.requestPermissions(this.getActivity(), new String[]{Manifest.permission.ACCESS_BACKGROUND_LOCATION}, /*MY_PERMISSIONS_REQUEST_LOCATION*/10);
             return;
         }
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 60000 * 60, 1000, locationListener); // 1000밀리컨드 = 1초, 1000미터 = 1키로미터
