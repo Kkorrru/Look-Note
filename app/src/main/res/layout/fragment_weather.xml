@@ -48,10 +48,10 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.115"
+        app:layout_constraintHorizontal_bias="0.113"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/weather_title"
-        app:layout_constraintVertical_bias="0.548" />
+        app:layout_constraintVertical_bias="0.565" />
 
     <TextView
         android:id="@+id/todayT3H"
@@ -143,15 +143,15 @@
 
     <ListView
         android:id="@+id/recommand_listvew"
-        android:layout_width="360dp"
-        android:layout_height="196dp"
+        android:layout_width="357dp"
+        android:layout_height="175dp"
         android:background="@drawable/edit_round"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.529"
+        app:layout_constraintHorizontal_bias="0.549"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text4"
-        app:layout_constraintVertical_bias="0.641" />
+        app:layout_constraintTop_toBottomOf="@+id/text5"
+        app:layout_constraintVertical_bias="0.197" />
 
     <LinearLayout
         android:layout_width="360dp"

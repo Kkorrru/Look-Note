@@ -42,6 +42,31 @@
         app:layout_constraintVertical_bias="0.234" />
 
     <TextView
+        android:id="@+id/diary_c"
+        android:layout_width="157dp"
+        android:layout_height="88dp"
+        android:text="TextView"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.893"
+        app:layout_constraintStart_toEndOf="@+id/top2"
+        app:layout_constraintTop_toTopOf="@+id/acc3"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/acc3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="104dp"
+        android:text="⦁ 일기"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.356"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/acc2"
+        app:layout_constraintVertical_bias="0.082" />
+
+    <TextView
         android:id="@+id/bottom_c"
         android:layout_width="157dp"
         android:layout_height="17dp"
@@ -68,7 +93,7 @@
         app:layout_constraintVertical_bias="0.06" />
 
     <TextView
-        android:id="@+id/diary_c"
+        android:id="@+id/acc_c"
         android:layout_width="157dp"
         android:layout_height="17dp"
         android:text="TextView"
@@ -76,7 +101,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.893"
         app:layout_constraintStart_toEndOf="@+id/top2"
-        app:layout_constraintTop_toTopOf="@+id/acc3"
+        app:layout_constraintTop_toTopOf="@+id/acc2"
         app:layout_constraintVertical_bias="0.0" />
 
     <TextView
@@ -91,18 +116,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/top2"
         app:layout_constraintVertical_bias="0.054" />
-
-    <TextView
-        android:id="@+id/acc_c"
-        android:layout_width="157dp"
-        android:layout_height="17dp"
-        android:text="TextView"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.893"
-        app:layout_constraintStart_toEndOf="@+id/top2"
-        app:layout_constraintTop_toTopOf="@+id/acc2"
-        app:layout_constraintVertical_bias="0.016" />
 
     <TextView
         android:id="@+id/date_num"
@@ -151,18 +164,5 @@
         app:layout_constraintStart_toEndOf="@+id/min_tem"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.098" />
-
-    <TextView
-        android:id="@+id/acc3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="104dp"
-        android:text="⦁ 일기"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.356"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/acc2"
-        app:layout_constraintVertical_bias="0.08" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
