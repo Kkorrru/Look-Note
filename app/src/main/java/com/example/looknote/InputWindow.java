@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,6 +22,14 @@ public class InputWindow extends AppCompatActivity {
 
     int satisnum;
 
+    //target
+    int tid;
+    float tmax;
+    float tmin;
+    int tsky;
+
+    int flag;
+
     EditText toppad;
     EditText bottompad;
     EditText accpad;
@@ -30,19 +39,33 @@ public class InputWindow extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_input_window);
 
+        int o = 28;
+        int i;
+        flag=0;
+
+        SQLiteDatabase db;
+        dbHelper helper = new dbHelper(this);
+        db = helper.getWritableDatabase();
+
+        /*for(i=23;i<=o;i++)
+        {
+            db.execSQL("DELETE FROM record WHERE _id = '" + i + "';");
+        }*/
+        //Log.d("Debug", "delete plz");
+
         toppad = (EditText) findViewById(R.id.top_pad);
         bottompad = (EditText) findViewById(R.id.bottom_pad);
         accpad = (EditText) findViewById(R.id.acc_pad);
         notepad = (EditText) findViewById(R.id.note_pad);
 
         Button saveButton = (Button) findViewById(R.id.save_button);
-        saveButton.setOnClickListener(new View.OnClickListener() {
+        /*saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(intent);
             }
-        });
+        });*/
     }
 
     public void onStart()
@@ -91,10 +114,12 @@ public class InputWindow extends AppCompatActivity {
         SQLiteDatabase db = helper.getWritableDatabase();
         Cursor cursor;
         int thisday = iyear*10000+imonth*100+idate;
+
         TextView topText = (TextView)findViewById(R.id.top_pad);
         TextView downText = (TextView)findViewById(R.id.bottom_pad);
         TextView accText = (TextView)findViewById(R.id.acc_pad);
         TextView diaryText = (TextView)findViewById(R.id.note_pad);
+
         cursor = db.rawQuery("SELECT * FROM record WHERE date_num = "+thisday+";", null);
 
         int count = cursor.getCount();
@@ -121,18 +146,25 @@ public class InputWindow extends AppCompatActivity {
 
     public void satisOnclick(View v)
     {
+        flag=1;
         switch (v.getId())
         {
             case R.id.sat_cold:
                 satisnum=1;
+                Log.d("Debug", "cold");
+                break;
             case R.id.sat_cool:
                 satisnum=2;
+                break;
             case R.id.sat_nice:
                 satisnum=3;
+                break;
             case R.id.sat_warm:
                 satisnum=4;
+                break;
             case R.id.sat_hot:
                 satisnum=5;
+                break;
 
         }
     }
@@ -144,12 +176,54 @@ public class InputWindow extends AppCompatActivity {
         db = helper.getWritableDatabase();
 
         String toppads = toppad.getText().toString();
-        String bottompads = toppad.getText().toString();
-        String accpads = toppad.getText().toString();
-        String notepads = toppad.getText().toString();
+        String bottompads = bottompad.getText().toString();
+        String accpads = accpad.getText().toString();
+        String notepads = notepad.getText().toString();
 
         //DB에서 날짜 서치해서 온도와 sky값 가져와서 저장한 후에 그 라인 없애고 diary 내용 추가해서 넣기
-        //db.execSQL("INSERT INTO record VALUES (null, '"+todayn+"', '"+satisnum+"', '"+toppads+"', '"+bottompads+"', '"+accpads+"', '"+notepads+"', '0', '0', '0')");
+
+        //Log.d("Debug", "before c");
+        Cursor cursorss = db.rawQuery("SELECT * FROM record WHERE date_num="+todayn+"", null);
+        //Log.d("Debug", "after c");
+
+        Log.d("Debug", "before i");
+
+        /////////////////////////////////////////////////
+        while (cursorss.moveToNext())
+        {
+            tid = cursorss.getInt(0) ;
+            if (flag==0)
+            {
+                satisnum = cursorss.getInt(2);
+            }
+            //satisnum = cursorss.getInt(2);
+            tmax = cursorss.getInt(7);
+            tmin = cursorss.getInt(8);
+            tsky = cursorss.getInt(9);
+            flag=0;
+        }
+
+        //tid = cursorss.getInt(1);
+
+        /////////////////////////////////////////////////
+
+        Log.d("DebugInsert tid", Integer.toString(tid));
+        Log.d("DebugInsert tmax", Float.toString(tmax));
+        Log.d("DebugInsert tmin", Float.toString(tmin));
+        Log.d("DebugInsert tsky", Integer.toString(tsky));
+
+        Log.d("Debug", "after i");
+
+        db.execSQL("INSERT INTO record VALUES (null, '"+todayn+"', '"+satisnum+"', '"+toppads+"', '"+bottompads+"', '"+accpads+"', '"+notepads+"', '"+tmax+"', '"+tmin+"', '"+tsky+"')");
+
+        Log.d("Debug", "todayTop: " + toppads);
+        Log.d("Debug", "tmax: " + tmax);
+
+        db.execSQL("DELETE FROM record WHERE _id = '" + tid + "';");
+
+        Log.d("Debug", "save click");
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        startActivity(intent);
     }
 }
 
