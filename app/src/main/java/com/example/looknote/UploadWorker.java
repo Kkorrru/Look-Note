@@ -58,7 +58,7 @@ public class UploadWorker extends Worker {
 
         Cursor cursor = db.rawQuery("SELECT * FROM record WHERE date_num="+gw.todayDate+"", null); // 중복 방지
         if (!cursor.moveToFirst()) {
-            db.execSQL("INSERT INTO record VALUES (null, '" + Integer.parseInt(gw.todayDate) + "', 0, '0', '0', '0', '0', '" + gw.max_tem + "', '" + gw.min_tem + "', '" + gw.sky + "')");
+            db.execSQL("INSERT INTO record VALUES (null, '" + Integer.parseInt(gw.todayDate) + "', 0, null, null, null, null, '" + gw.max_tem + "', '" + gw.min_tem + "', '" + gw.sky + "')");
             Log.d("DebugInsert", gw.todayDate + gw.max_tem + gw.min_tem + gw.sky);
             return Result.success();
         }

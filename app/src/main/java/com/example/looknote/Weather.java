@@ -80,13 +80,13 @@ public class Weather extends Fragment {
             acc.setText(" ");
         }
         else if (gw.today_tem <28&&gw.today_tem>=23){
-            temp.setText("27°C ~ 23°C (버틸만한 더위)");
+            temp.setText("23°C ~ 27°C (버틸만한 더위)");
             top.setText("  반팔, 얇은 셔츠 ");
             bottom.setText("  반바지, 면바지");
             acc.setText(" ");
         }
         else if (gw.today_tem <23&&gw.today_tem>=20){
-            temp.setText("22°C ~ 20°C (활동하기 좋은 날씨)");
+            temp.setText("20°C ~ 22°C (활동하기 좋은 날씨)");
             top.setText("  얇은 가디건, 긴팔 티셔츠, 블라우스");
             bottom.setText("  면바지, 청바지, 슬랙스");
             acc.setText(" ");
@@ -98,13 +98,13 @@ public class Weather extends Fragment {
             acc.setText(" ");
         }
         else if (gw.today_tem <17&&gw.today_tem>=12){
-            temp.setText("16°C ~ 12°C (쌀쌀해진 날씨)");
+            temp.setText("12°C ~ 16°C (쌀쌀해진 날씨)");
             top.setText("  자켓, 가디건, 청자켓, 후드티, 셔츠, 야상");
             bottom.setText("  스타킹, 청바지, 면바지");
             acc.setText(" ");
         }
         else if (gw.today_tem <12&&gw.today_tem>=9){
-            temp.setText("11°C ~ 9°C(트렌치가 어울리는 날씨)");
+            temp.setText("9°C ~ 11°C(트렌치가 어울리는 날씨)");
             top.setText("  도톰한 자켓, 트렌치코트, 야상, 점퍼, 니트");
             bottom.setText("  청바지, 스타킹");
             acc.setText(" ");
@@ -159,7 +159,7 @@ public class Weather extends Fragment {
                 Cursor cursor = db.rawQuery("SELECT * FROM record WHERE date_num="+gw.todayDate+"", null); // 중복 방지
                 if (!cursor.moveToFirst())
                 {
-                    db.execSQL("INSERT INTO record VALUES (null, '"+Integer.parseInt(gw.todayDate)+"', 0, '0', '0', '0', '0', '"+gw.max_tem+"', '"+ min_tem+"', '"+gw.sky+"')");
+                    db.execSQL("INSERT INTO record VALUES (null, '"+Integer.parseInt(gw.todayDate)+"', 0, null, null, null, null, '"+gw.max_tem+"', '"+ min_tem+"', '"+gw.sky+"')");
                     Log.d("DebugInsert(Fore)", gw.todayDate + gw.max_tem + min_tem + gw.sky);
                 }
 

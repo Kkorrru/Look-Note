@@ -49,7 +49,7 @@ public class GetWeather {
 
     void setWorkManger() {
         // =================알람===================
-        periodicWorkRequest = new PeriodicWorkRequest.Builder(UploadWorker.class, 15, TimeUnit.MINUTES)
+        periodicWorkRequest = new PeriodicWorkRequest.Builder(UploadWorker.class, 12, TimeUnit.HOURS)
                 .build();
         WorkManager.getInstance().enqueue(periodicWorkRequest); //Operation mWorkManager =
     }
