@@ -67,61 +67,6 @@ public class Weather extends Fragment {
         gw.getDateTime();
         UpdateView();
 
-
-        TextView temp= (TextView)v.findViewById(R.id.rec_temp);
-        TextView top= (TextView)v.findViewById(R.id.rec_top);
-        TextView bottom= (TextView)v.findViewById(R.id.rec_bottom);
-        TextView acc= (TextView)v.findViewById(R.id.rec_acc);
-
-        if(gw.today_tem >= 28){
-            temp.setText("~28°C (한여름 날씨)");
-            top.setText("  민소매, 반팔 티셔츠, 린넨 옷");
-            bottom.setText("  반바지, 치마, 원피스");
-            acc.setText(" ");
-        }
-        else if (gw.today_tem <28&&gw.today_tem>=23){
-            temp.setText("23°C ~ 27°C (버틸만한 더위)");
-            top.setText("  반팔, 얇은 셔츠 ");
-            bottom.setText("  반바지, 면바지");
-            acc.setText(" ");
-        }
-        else if (gw.today_tem <23&&gw.today_tem>=20){
-            temp.setText("20°C ~ 22°C (활동하기 좋은 날씨)");
-            top.setText("  얇은 가디건, 긴팔 티셔츠, 블라우스");
-            bottom.setText("  면바지, 청바지, 슬랙스");
-            acc.setText(" ");
-        }
-        else if (gw.today_tem <20&&gw.today_tem>=17){
-            temp.setText("17°C ~ 19°C (좋지만 쌀쌀할 수도 있으니 주의!)");
-            top.setText("  얇은 니트, 맨투맨, 후드티, 가디건, 얇은 자켓");
-            bottom.setText("  청바지, 면바지");
-            acc.setText(" ");
-        }
-        else if (gw.today_tem <17&&gw.today_tem>=12){
-            temp.setText("12°C ~ 16°C (쌀쌀해진 날씨)");
-            top.setText("  자켓, 가디건, 청자켓, 후드티, 셔츠, 야상");
-            bottom.setText("  스타킹, 청바지, 면바지");
-            acc.setText(" ");
-        }
-        else if (gw.today_tem <12&&gw.today_tem>=9){
-            temp.setText("9°C ~ 11°C(트렌치가 어울리는 날씨)");
-            top.setText("  도톰한 자켓, 트렌치코트, 야상, 점퍼, 니트");
-            bottom.setText("  청바지, 스타킹");
-            acc.setText(" ");
-        }
-        else if (gw.today_tem <9&&gw.today_tem>=5){
-            temp.setText("5°C ~ 8°C (멋부리다간 얼어 죽는 날씨)");
-            top.setText("  코트, 가죽 자켓, 발열내의, 니트, 기모티셔츠");
-            bottom.setText("  청바지, 레깅스, 기모바지");
-            acc.setText(" ");
-        }
-        else{
-            temp.setText("4°C ~ (내가 입을 수 있는 최대한 두껍게!)");
-            top.setText("  패딩, 두꺼운 코드, 기모제품, 누빔옷");
-            bottom.setText("  ");
-            acc.setText("  목도리, 장갑, 마스크, 방한용품");
-        }
-
         return v;
     }
 
@@ -162,21 +107,21 @@ public class Weather extends Fragment {
                     db.execSQL("INSERT INTO record VALUES (null, '"+Integer.parseInt(gw.todayDate)+"', 0, null, null, null, null, '"+gw.max_tem+"', '"+ min_tem+"', '"+gw.sky+"')");
                     Log.d("DebugInsert(Fore)", gw.todayDate + gw.max_tem + min_tem + gw.sky);
                 }
-
+                
                 cursor = db.rawQuery("SELECT * FROM record WHERE date_num="+gw.todayDate+"", null); // 중복 방지
-                String date_num, satisf, top_c, bottom_c, acc, diary, max_tem = null, min_tem, sky;
+                String date_num, satisf, top_c, bottom_c, acc_c, diary, max_tem, min_tem, sky;
                 cursor.moveToFirst(); // 처음엔 -1을 가르키고 있기 때문에 0(first)으로 이동 안 시켜주면 에러 남
                 {
                     date_num = cursor.getString(cursor.getColumnIndex("date_num"));
                     satisf = cursor.getString(cursor.getColumnIndex("satisf"));
                     top_c = cursor.getString(cursor.getColumnIndex("top_c"));
                     bottom_c = cursor.getString(cursor.getColumnIndex("bottom_c"));
-                    acc = cursor.getString(cursor.getColumnIndex("acc"));
+                    acc_c = cursor.getString(cursor.getColumnIndex("acc"));
                     diary = cursor.getString(cursor.getColumnIndex("diary"));
                     max_tem = cursor.getString(cursor.getColumnIndex("max_tem"));
                     min_tem = cursor.getString(cursor.getColumnIndex("min_tem"));
                     sky = cursor.getString(cursor.getColumnIndex("sky"));
-                    Log.v("Debug-query", date_num + ", " + satisf + ", " + top_c + ", " + bottom_c + ", " + acc + ", " + diary + ", " + max_tem + ", " + min_tem + ", " + sky);
+                    Log.v("Debug-query", date_num + ", " + satisf + ", " + top_c + ", " + bottom_c + ", " + acc_c + ", " + diary + ", " + max_tem + ", " + min_tem + ", " + sky);
 
                     TextView textView;
                     textView = v.findViewById(R.id.todayTMN); textView.setText(min_tem + " ºC");
@@ -207,6 +152,61 @@ public class Weather extends Fragment {
                         case "8": // 흐림 8
                             imageView.setImageResource(R.drawable.blur);
                             break;
+                    }
+
+
+                    TextView temp= (TextView)v.findViewById(R.id.rec_temp);
+                    TextView top= (TextView)v.findViewById(R.id.rec_top);
+                    TextView bottom= (TextView)v.findViewById(R.id.rec_bottom);
+                    TextView acc= (TextView)v.findViewById(R.id.rec_acc);
+
+                    if(gw.today_tem >= 28){
+                        temp.setText("~28°C (한여름 날씨)");
+                        top.setText("  민소매, 반팔 티셔츠, 린넨 옷");
+                        bottom.setText("  반바지, 치마, 원피스");
+                        acc.setText(" ");
+                    }
+                    else if (gw.today_tem <28&&gw.today_tem>=23){
+                        temp.setText("23°C ~ 27°C (버틸만한 더위)");
+                        top.setText("  반팔, 얇은 셔츠 ");
+                        bottom.setText("  반바지, 면바지");
+                        acc.setText(" ");
+                    }
+                    else if (gw.today_tem <23&&gw.today_tem>=20){
+                        temp.setText("20°C ~ 22°C (활동하기 좋은 날씨)");
+                        top.setText("  얇은 가디건, 긴팔 티셔츠, 블라우스");
+                        bottom.setText("  면바지, 청바지, 슬랙스");
+                        acc.setText(" ");
+                    }
+                    else if (gw.today_tem <20&&gw.today_tem>=17){
+                        temp.setText("17°C ~ 19°C (좋지만 쌀쌀할 수도 있으니 주의!)");
+                        top.setText("  얇은 니트, 맨투맨, 후드티, 가디건, 얇은 자켓");
+                        bottom.setText("  청바지, 면바지");
+                        acc.setText(" ");
+                    }
+                    else if (gw.today_tem <17&&gw.today_tem>=12){
+                        temp.setText("12°C ~ 16°C (쌀쌀해진 날씨)");
+                        top.setText("  자켓, 가디건, 청자켓, 후드티, 셔츠, 야상");
+                        bottom.setText("  스타킹, 청바지, 면바지");
+                        acc.setText(" ");
+                    }
+                    else if (gw.today_tem <12&&gw.today_tem>=9){
+                        temp.setText("9°C ~ 11°C(트렌치가 어울리는 날씨)");
+                        top.setText("  도톰한 자켓, 트렌치코트, 야상, 점퍼, 니트");
+                        bottom.setText("  청바지, 스타킹");
+                        acc.setText(" ");
+                    }
+                    else if (gw.today_tem <9&&gw.today_tem>=5){
+                        temp.setText("5°C ~ 8°C (멋부리다간 얼어 죽는 날씨)");
+                        top.setText("  코트, 가죽 자켓, 발열내의, 니트, 기모티셔츠");
+                        bottom.setText("  청바지, 레깅스, 기모바지");
+                        acc.setText(" ");
+                    }
+                    else{
+                        temp.setText("4°C ~ (내가 입을 수 있는 최대한 두껍게!)");
+                        top.setText("  패딩, 두꺼운 코드, 기모제품, 누빔옷");
+                        bottom.setText("  ");
+                        acc.setText("  목도리, 장갑, 마스크, 방한용품");
                     }
                 }
             }
