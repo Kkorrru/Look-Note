@@ -42,7 +42,7 @@ public class GridClickListener implements OnClickListener {
             context.startActivity(intent);
         }
 
-        if(degree.equals("NO DATA")){
+        if(degree.equals(" ")){
             Intent intent = new Intent(context, InputWindow.class);
             intent.putExtra("year", year);
             intent.putExtra("month", month+1);

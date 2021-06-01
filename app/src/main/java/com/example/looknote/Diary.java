@@ -165,7 +165,7 @@ public class Diary extends Fragment {
         String date_num, satisf, max_tem = null, min_tem;
         if(count==0){
             for(int j = 1; j<=calLastDay; j++){
-                adapter.addItem(new Griditem(calYear, calMonth,Integer.toString(j), "NO DATA", imgList[0]));
+                adapter.addItem(new Griditem(calYear, calMonth,Integer.toString(j), " ", imgList[0]));
             }
         }
         else{
@@ -184,7 +184,7 @@ public class Diary extends Fragment {
                 }
 
                 else {
-                    adapter.addItem(new Griditem(calYear, calMonth,Integer.toString(j), "NO DATA", imgList[0]));
+                    adapter.addItem(new Griditem(calYear, calMonth,Integer.toString(j), " ", imgList[0]));
                 }
 
             }
@@ -219,7 +219,7 @@ public class Diary extends Fragment {
                 String date_num, satisf, max_tem = null, min_tem;
                 if(count==0){
                     for(int j = 1; j<=calLastDay; j++){
-                        adapter.addItem(new Griditem(calYear, calMonth,Integer.toString(j), "NO DATA", imgList[0]));
+                        adapter.addItem(new Griditem(calYear, calMonth,Integer.toString(j), " ", imgList[0]));
                     }
                 }
                 else{
@@ -238,7 +238,7 @@ public class Diary extends Fragment {
                         }
 
                         else {
-                            adapter.addItem(new Griditem(calYear, calMonth,Integer.toString(j), "NO DATA", imgList[0]));
+                            adapter.addItem(new Griditem(calYear, calMonth,Integer.toString(j), " ", imgList[0]));
                         }
 
                     }
@@ -273,7 +273,7 @@ public class Diary extends Fragment {
                 String date_num, satisf, max_tem = null, min_tem;
                 if(count==0){
                     for(int j = 1; j<=calLastDay; j++){
-                        adapter.addItem(new Griditem(calYear, calMonth,Integer.toString(j), "NO DATA", imgList[0]));
+                        adapter.addItem(new Griditem(calYear, calMonth,Integer.toString(j), " ", imgList[0]));
                     }
                 }
                 else{
@@ -292,7 +292,7 @@ public class Diary extends Fragment {
                         }
 
                         else {
-                            adapter.addItem(new Griditem(calYear, calMonth,Integer.toString(j), "NO DATA", imgList[0]));
+                            adapter.addItem(new Griditem(calYear, calMonth,Integer.toString(j), " ", imgList[0]));
                         }
 
                     }
