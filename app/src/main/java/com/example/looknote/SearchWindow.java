@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -16,11 +17,17 @@ public class SearchWindow extends AppCompatActivity{
     int mmyear;
     int mmmonth;
     int mmdate;
+    int tid;
+    int todayn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_window);
+
+        dbHelper helper = new dbHelper(this);
+        SQLiteDatabase db;
+        db = helper.getWritableDatabase();
 
         Button editButton = (Button) findViewById(R.id.button_edit);
         editButton.setOnClickListener(new View.OnClickListener() {
@@ -44,6 +51,28 @@ public class SearchWindow extends AppCompatActivity{
             }
         });
 
+
+        Button delButton = (Button) findViewById(R.id.button_del);
+        delButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                todayn = mmyear * 10000;
+                todayn += mmmonth * 100;
+                todayn += mmdate;
+
+                Cursor cursorss = db.rawQuery("SELECT * FROM record WHERE date_num="+todayn+"", null);
+
+                while (cursorss.moveToNext())
+                {
+                    tid = cursorss.getInt(0) ;
+                }
+                db.execSQL("DELETE FROM record WHERE _id = '" + tid + "';");
+
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(intent);
+
+            }
+        });
     }
 
 
