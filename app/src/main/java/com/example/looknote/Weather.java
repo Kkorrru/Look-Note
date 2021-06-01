@@ -92,7 +92,7 @@ public class Weather extends Fragment {
             acc.setText(" ");
         }
         else if (gw.today_tem <20&&gw.today_tem>=17){
-            temp.setText("19°C ~ 17°C (좋지만 쌀쌀할 수도 있으니 주의!)");
+            temp.setText("17°C ~ 19°C (좋지만 쌀쌀할 수도 있으니 주의!)");
             top.setText("  얇은 니트, 맨투맨, 후드티, 가디건, 얇은 자켓");
             bottom.setText("  청바지, 면바지");
             acc.setText(" ");
@@ -110,7 +110,7 @@ public class Weather extends Fragment {
             acc.setText(" ");
         }
         else if (gw.today_tem <9&&gw.today_tem>=5){
-            temp.setText("8°C ~ 5°C (멋부리다간 얼어 죽는 날씨)");
+            temp.setText("5°C ~ 8°C (멋부리다간 얼어 죽는 날씨)");
             top.setText("  코트, 가죽 자켓, 발열내의, 니트, 기모티셔츠");
             bottom.setText("  청바지, 레깅스, 기모바지");
             acc.setText(" ");
@@ -229,8 +229,8 @@ public class Weather extends Fragment {
 
                 Cursor cursor = db.rawQuery("SELECT * FROM record WHERE max_tem < "+gw.max_tem+" + 2 and max_tem > "+gw.max_tem+" - 2 " +
                         "and min_tem < "+gw.min_tem+" + 2 and min_tem > "+gw.min_tem+" - 2 " +
-                        "and max_tem > "+gw.today_tem+" and min_tem < "+gw.today_tem+" " +
                         "and date_num != "+gw.todayDate+"", null);
+
                 String date_num, satisf, top_c, bottom_c, acc, diary, max_tem, min_tem, sky;
                 while(cursor.moveToNext())
                 {
