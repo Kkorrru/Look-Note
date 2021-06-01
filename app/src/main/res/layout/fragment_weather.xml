@@ -13,7 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="LOOK NOTE"
-        android:textColor="#636363"
+        android:textColor="#546271"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -27,15 +27,31 @@
         android:id="@+id/text4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="과거 비슷한 날씨에는?"
+        android:text="기본 추천"
+        android:textColor="#546271"
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.105"
+        app:layout_constraintHorizontal_bias="0.079"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/weather_title"
-        app:layout_constraintVertical_bias="0.461" />
+        app:layout_constraintVertical_bias="0.326" />
+
+    <TextView
+        android:id="@+id/text5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="과거 비슷한 날씨에는?"
+        android:textColor="#546271"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.115"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/weather_title"
+        app:layout_constraintVertical_bias="0.548" />
 
     <TextView
         android:id="@+id/todayT3H"
@@ -51,7 +67,7 @@
         app:layout_constraintHorizontal_bias="0.38"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/weather_title"
-        app:layout_constraintVertical_bias="0.015" />
+        app:layout_constraintVertical_bias="0.003" />
 
     <ImageView
         android:id="@+id/todaySKY"
@@ -63,8 +79,8 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/todayT3H"
         app:layout_constraintTop_toBottomOf="@+id/weather_title"
-        app:layout_constraintVertical_bias="0.102"
-        app:srcCompat="@drawable/sunny"  />
+        app:layout_constraintVertical_bias="0.074"
+        app:srcCompat="@drawable/sunny" />
 
     <TextView
         android:id="@+id/todayTMX"
@@ -79,7 +95,7 @@
         app:layout_constraintHorizontal_bias="0.098"
         app:layout_constraintStart_toEndOf="@+id/todayTMN"
         app:layout_constraintTop_toBottomOf="@+id/todayT3H"
-        app:layout_constraintVertical_bias="0.043" />
+        app:layout_constraintVertical_bias="0.023" />
 
     <TextView
         android:id="@+id/todayTMN"
@@ -95,7 +111,7 @@
         app:layout_constraintHorizontal_bias="0.403"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/todayT3H"
-        app:layout_constraintVertical_bias="0.045" />
+        app:layout_constraintVertical_bias="0.025" />
 
     <TextView
         android:id="@+id/todayLocation"
@@ -115,6 +131,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="현재 날씨"
+        android:textColor="#546271"
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -126,12 +143,104 @@
 
     <ListView
         android:id="@+id/recommand_listvew"
-        android:layout_width="355dp"
-        android:layout_height="264dp"
+        android:layout_width="360dp"
+        android:layout_height="196dp"
+        android:background="@drawable/edit_round"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.529"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/text4"
-        app:layout_constraintVertical_bias="0.45" />
+        app:layout_constraintVertical_bias="0.641" />
+
+    <LinearLayout
+        android:layout_width="360dp"
+        android:layout_height="101dp"
+        android:layout_marginLeft="5dp"
+        android:background="@drawable/edit_round"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/text5"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.49"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text4">
+
+        <TextView
+            android:id="@+id/rec_temp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:text="TextView"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="23dp"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/rec_top_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="⦁     상의     |"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/rec_top"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="TextView"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="23dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/rec_bottom_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="⦁     하의     |"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/rec_bottom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="TextView"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="23dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/rec_acc_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="⦁ 악세서리 |"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/rec_acc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="TextView"
+                android:textSize="12sp" />
+        </LinearLayout>
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

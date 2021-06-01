@@ -143,6 +143,12 @@ public class Diary extends Fragment {
         TextView texYear = (TextView)getView().findViewById(R.id.year);
         texMon.setText(retMon(calMonth));
         texYear.setText(Integer.toString(calYear));
+
+        /*어뎁터 비우기*/
+        int cnt = adapter.getCount();
+        for(int i = cnt-1; i>=0; i--){
+            adapter.delItem(i);
+        }
         /*빈 칸*/
         for(int i = 0; i<calStart; i++){
             adapter.addItem(new Griditem(calYear, calMonth," ", " ", 0));
