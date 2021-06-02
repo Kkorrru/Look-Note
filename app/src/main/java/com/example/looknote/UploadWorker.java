@@ -26,6 +26,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
+import static androidx.core.app.ActivityCompat.requestPermissions;
+
 public class UploadWorker extends Worker {
     GetWeather gw = new GetWeather();
 
@@ -84,8 +86,7 @@ public class UploadWorker extends Worker {
                 try {
                     addresses[0] = geocoder.getFromLocation(37.283479198468555, 127.04656764446653, 1);
                     //addresses[0] = geocoder.getFromLocation(latitude*10/1/10, longitude*10/1/10, 1); //latitude: 위도, longtitude: 경도
-                    gw.todayLocation = addresses[0].get(0).getAddressLine(0).toString();
-                    Log.d("Debug-location", gw.todayLocation);
+                    gw.todayLocation = addresses[0].get(0).getAddressLine(0).toString(); Log.d("Debug-BackGround-location", gw.todayLocation);
                     gw.todayLocation = gw.todayLocation.substring(gw.todayLocation.indexOf(" ") + 1);
                     gw.todayLocation = gw.todayLocation.substring(0, gw.todayLocation.indexOf(" ") + 1 + gw.todayLocation.substring(gw.todayLocation.indexOf(" ") + 1).indexOf(" "));
 
@@ -176,11 +177,12 @@ public class UploadWorker extends Worker {
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (ActivityCompat.checkSelfPermission(thisContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.checkSelfPermission(thisContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
                 }
                 if (ActivityCompat.checkSelfPermission(thisContext, Manifest.permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_DENIED) {
                     //Toast.makeText(thisContext, /*"First enable LOCATION ACCESS in settings."*/"위치 액세스 권한 항상 허용을 거부할 시 앱 이용에 제한이 있을 수 있습니다.", Toast.LENGTH_SHORT).show();
+                    Log.d("Debug-BackGround", "HERE3");
                     return;
                 }
                 Log.d("Debug-BackGround", "HERE2");
@@ -193,7 +195,7 @@ public class UploadWorker extends Worker {
             public void run() {
                 gw.getWeather();
             }
-        }, 5500);
+        }, 20000);
     }
 }
 

@@ -107,7 +107,7 @@ public class Weather extends Fragment {
                     db.execSQL("INSERT INTO record VALUES (null, '"+Integer.parseInt(gw.todayDate)+"', 0, null, null, null, null, '"+gw.max_tem+"', '"+ min_tem+"', '"+gw.sky+"')");
                     Log.d("DebugInsert(Fore)", gw.todayDate + gw.max_tem + min_tem + gw.sky);
                 }
-                
+
                 cursor = db.rawQuery("SELECT * FROM record WHERE date_num="+gw.todayDate+"", null); // 중복 방지
                 String date_num, satisf, top_c, bottom_c, acc_c, diary, max_tem, min_tem, sky;
                 cursor.moveToFirst(); // 처음엔 -1을 가르키고 있기 때문에 0(first)으로 이동 안 시켜주면 에러 남
@@ -352,13 +352,12 @@ public class Weather extends Fragment {
             public void onProviderEnabled(String provider) { }
             public void onProviderDisabled(String provider) { }
         };
-        if (ActivityCompat.checkSelfPermission(this.getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this.getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
         }
         if(ActivityCompat.checkSelfPermission(this.getContext(), Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED)
         {
             Toast.makeText(this.getContext(), "위치 액세스 권한 항상 허용을 거부할 시 앱 이용에 제한이 있습니다.", Toast.LENGTH_LONG).show();
-
             ActivityCompat.requestPermissions(this.getActivity(), new String[]{Manifest.permission.ACCESS_BACKGROUND_LOCATION}, /*MY_PERMISSIONS_REQUEST_LOCATION*/10);
             return;
         }
