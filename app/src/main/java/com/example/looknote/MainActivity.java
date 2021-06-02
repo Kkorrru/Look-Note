@@ -75,8 +75,8 @@ public class MainActivity extends AppCompatActivity {
             editor.putBoolean("isFirst",true);
             editor.commit();
             //앱 최초 실행시 하고 싶은 작업
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, /*MY_PERMISSIONS_REQUEST_LOCATION*/10);
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, /*MY_PERMISSIONS_REQUEST_LOCATION*/10);
             GetWeather gw = new GetWeather();
             gw.setWorkManger();
         }else{
