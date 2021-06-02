@@ -84,23 +84,23 @@
 
     <TextView
         android:id="@+id/todayTMX"
-        android:layout_width="52dp"
-        android:layout_height="19dp"
+        android:layout_width="74dp"
+        android:layout_height="18dp"
         android:layout_gravity="center|right"
         android:text="최고기온"
         android:textAlignment="center"
         android:textColor="#F44336"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.098"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/todayTMN"
         app:layout_constraintTop_toBottomOf="@+id/todayT3H"
-        app:layout_constraintVertical_bias="0.023" />
+        app:layout_constraintVertical_bias="0.026" />
 
     <TextView
         android:id="@+id/todayTMN"
-        android:layout_width="52dp"
-        android:layout_height="19dp"
+        android:layout_width="73dp"
+        android:layout_height="18dp"
         android:layout_gravity="center"
         android:text="최저기온"
         android:textAlignment="center"
@@ -108,10 +108,10 @@
         android:textColorHint="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.403"
+        app:layout_constraintHorizontal_bias="0.391"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/todayT3H"
-        app:layout_constraintVertical_bias="0.025" />
+        app:layout_constraintVertical_bias="0.026" />
 
     <TextView
         android:id="@+id/todayLocation"
